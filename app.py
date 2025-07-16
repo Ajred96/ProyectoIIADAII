@@ -18,7 +18,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 def parse_input_file_to_dict(filepath):
     """Parsea el archivo de texto de entrada y lo convierte en un diccionario."""
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             lines = [line.strip() for line in f.read().splitlines() if line.strip()]
 
         data = {}
@@ -128,7 +128,7 @@ def solve_instance():
     
     command = ["minizinc", "--solver", "CoinBC", app.config['MINIZINC_MODEL_PATH'], dzn_path]
     try:
-        process = subprocess.run(command, capture_output=True, text=True, timeout=430, check=False)
+        process = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', timeout=430, check=False)
         results = parse_minizinc_output(process.stdout or process.stderr, input_data['m'])
         return jsonify(results)
     except subprocess.TimeoutExpired:
