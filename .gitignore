@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+.env/
+.env.bak/
+.venv/
+
+# Archivos de configuración de entorno local
+*.env
+*.env.*
+
+# Archivos de instancia temporales
+uploads/
