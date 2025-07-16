@@ -85,9 +85,17 @@ def main_page():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    """Recibe un archivo, lo parsea y devuelve los datos de entrada en formato JSON."""
+    """Recibe un archivo, elimina los .txt previos, lo parsea y devuelve los datos de entrada en formato JSON."""
     if 'file' not in request.files or not request.files['file'].filename:
         return jsonify({'error': 'No se seleccionó ningún archivo.'}), 400
+
+    # Elimina todos los archivos .txt en la carpeta de uploads
+    for fname in os.listdir(app.config['UPLOAD_FOLDER']):
+        if fname.lower().endswith('.txt'):
+            try:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+            except Exception:
+                pass
 
     file = request.files['file']
     filename = secure_filename(file.filename)
@@ -99,7 +107,6 @@ def upload_file():
         os.remove(filepath)
         return jsonify(data), 400
 
-    # Cambiamos 'ext' a 'ext' para que coincida con el script del frontend
     data['ext'] = data.pop('ext')
     data['filename'] = filename
     return jsonify(data)
@@ -134,7 +141,6 @@ def solve_instance():
     except subprocess.TimeoutExpired:
         return jsonify({'error': 'La ejecución ha excedido el tiempo límite.', 'raw_output': 'Timeout'}), 500
     finally:
-        if os.path.exists(filepath): os.remove(filepath)
         if os.path.exists(dzn_path): os.remove(dzn_path)
 
 if __name__ == '__main__':
