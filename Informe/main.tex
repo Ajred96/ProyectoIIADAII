@@ -94,17 +94,9 @@ El fenómeno del extremismo ha cobrado especial relevancia en las sociedades act
 El presente trabajo se desarrolla mediante técnicas avanzadas de programación entera mixta y optimización combinatoria, utilizando el método Branch and Bound y herramientas de modelamiento como MiniZinc. El proyecto también incluye el diseño de una interfaz gráfica que permite a un usuario final interactuar de manera intuitiva con el modelo desarrollado.
 
 %%%%%%% INTRODUCCIÓN %%%%%%% FIN
-
 \newpage
 
-%%%%%%% FUNCIONES AUXILIARES %%%%%%% INICIO
-\section{Funciones auxiliares}
-
-  En este proyecto no se emplean funciones auxiliares adicionales en el modelo MiniZinc proporcionado. La solución al problema se construye íntegramente mediante variables, parámetros, restricciones y la función objetivo definida explícitamente.
-
-%%%%%%% FUNCIONES AUXILIARES %%%%%%% FIN
-\newpage
-%%%%%%% FUERZA BRUTA %%%%%%% INICIO
+%%%%%%% DESCRIPCION Y JUSTIFICACION %%%%%%% INICIO
 \section{El modelo: Descripción y Justificación de su Adecuación}
 
 El modelo implementado para resolver el problema \texttt{MinExt} se fundamenta en los siguientes componentes:
@@ -145,11 +137,15 @@ que minimiza el extremismo total de la población resultante.
 
 La justificación del modelo radica en que incorpora explícitamente la reducción de extremismo bajo restricciones de costo y número de movimientos, modelando las limitaciones prácticas del contexto real y garantizando soluciones factibles y relevantes.
 
+%%%%%%% DESCRIPCION Y JUSTIFICACION %%%%%%% FIN
+
+%%%%%%% DETALLES IMPORTANTES DE LA IMPLEMENTACION %%%%%%% INICIO
 \section{Detalles importantes de implementación}
 
 Al implementar el modelo en MiniZinc se consideraron los siguientes aspectos críticos:
 
 \begin{itemize}
+ \item \textbf{Funciones auxiliares:} No se emplean funciones auxiliares adicionales en el modelo MiniZinc proporcionado. La solución al problema se construye íntegramente mediante variables, parámetros, restricciones y la función objetivo definida explícitamente.
   \item \textbf{Costos adicionales:} Se aplica el costo extra $c^e_i$ sólo si $p_i=0$, mediante cláusulas \texttt{if} para garantizar correcta contabilización.
   \item \textbf{Límite de movimientos:} Se define claramente la restricción \texttt{sum(x)} $\le\max M$, contabilizando cada cambio como $|j-i|$ movimientos.
   \item \textbf{Validación de factibilidad:} Todas las restricciones evitan transferencias internas o exceder la población disponible.
@@ -162,6 +158,27 @@ Al implementar el modelo en MiniZinc se consideraron los siguientes aspectos cr�
 \end{itemize}
 
 Estos elementos aseguran una implementación robusta, eficiente y fácilmente verificable para pruebas internas y validación externa mediante la interfaz gráfica.
+%%%%%%% DETALLES IMPORTANTES DE LA IMPLEMENTACION %%%%%%% FIN
+
+\newpage
+%%%%%%% ANALISIS DE LOS ARBOLES %%%%%%% INICIO
+\section{Análisis de los árboles generados por el modelo}
+
+%%%%%%% ANALISIS DE LOS ARBOLES %%%%%%% FIN
+\newpage
+
+%%%%%%% PRUEBAS %%%%%%% INICIO
+\section{Descripción de las pruebas}
+
+%%%%%%% PRUEBAS %%%%%%% FIN
+\newpage
+
+%%%%%%% ANALISIS DE LOS RESULTADOS %%%%%%% INICIO
+\section{Análisis de los resultados}
+
+%%%%%%% ANALISIS DE LOS RESULTADOS %%%%%%% FIN
+
+
 
 
 \end{document}
