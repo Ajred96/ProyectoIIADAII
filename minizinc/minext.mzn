@@ -36,10 +36,10 @@ var float: costo = sum(i, j in 1..m)(
 );
 
 % Total de movimientos realizados
-var float: movimientosTotales = sum(i, j in 1..m)(abs(j - i) * x[i, j]);
+var int: movimientosTotales = sum(i, j in 1..m)(abs(j - i) * x[i, j]);
 
 % Suma total de personas movidas (para verificar restricciones de población)
-var float: personaOpinion = sum(i, j in 1..m)(x[i, j]);
+var int: personaOpinion = sum(i, j in 1..m)(x[i, j]);
 
 
 % =========================== RESTRICCIONES ===========================
