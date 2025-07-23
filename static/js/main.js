@@ -16,68 +16,47 @@ $(document).ready(function () {
         formData.append('file', file);
 
         $.ajax({
-            url: '/upload',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
+            url: '/upload', type: 'POST', data: formData, processData: false, contentType: false,
             success: function (data) {
-                if (data.error) {
-                    showAlert(data.error, 'error');
-                    resetUI();
-                    return;
-                }
+                if (data.error) { showAlert(data.error, 'error'); resetUI(); return; }
                 isCustomInstance = false;
                 loadDataIntoInterface(data, `Instancia: ${file.name}`);
-                // 1. Deshabilitar y cambiar estilo del botón de crear instancia
                 $('#create-instance-button').prop('disabled', true).addClass('disabled:bg-gray-400 disabled:cursor-not-allowed');
             },
-            error: function (xhr) {
-                showAlert(xhr.responseJSON.error, 'error');
-                resetUI();
-            }
+            error: function (xhr) { showAlert(xhr.responseJSON.error, 'error'); resetUI(); }
         });
     });
 
     $('#solve-button').on('click', function () {
         if (!currentData) return;
         
-        // 2. Cambiar a la pestaña de resultados y actualizar estado del botón
         switchTab('results-tab-pane');
         $(this).prop('disabled', true).html('Resolviendo...');
         $('#results-container, #raw-output-container').html('<div class="flex justify-center items-center p-10"><i class="fas fa-spinner fa-spin fa-3x text-blue-500"></i></div>');
 
         $.ajax({
-            url: '/solve',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(currentData),
+            url: '/solve', type: 'POST', contentType: 'application/json', data: JSON.stringify(currentData),
             success: function (data) {
                 if (data.error) {
                     showAlert(data.error, 'error');
                     $('#results-container').html(`<div class="text-center text-red-500 p-4">${data.error}</div>`);
-                    // 2. Reactivar solo en caso de error
                     $('#solve-button').prop('disabled', false).html('Resolver');
                 } else {
                     displayResults(data);
-                    // El botón resolver permanece desactivado después de un éxito
                 }
             },
             error: function (xhr) {
                 const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : "Error desconocido.";
                 showAlert(errorMsg, 'error');
                 $('#results-container').html(`<div class="text-center text-red-500 p-4">${errorMsg}</div>`);
-                // 2. Reactivar solo en caso de error
                 $('#solve-button').prop('disabled', false).html('Resolver');
             }
         });
     });
 
-    $('#clear-button').on('click', function () {
-        resetUI();
-    });
+    $('#clear-button').on('click', function () { resetUI(); });
 
-    // --- MANEJADORES PARA CREAR/EDITAR INSTANCIA (MODAL) ---
+    // --- MANEJADORES PARA CREAR/EDITAR INSTANCIA ---
     
     $('#create-instance-button').on('click', function() {
         resetUI();
@@ -85,20 +64,7 @@ $(document).ready(function () {
         openCreationModal();
     });
     
-    $('#edit-instance-button').on('click', function() {
-        openCreationModal(currentData);
-    });
-
-    $('#modal-next-step').on('click', function() {
-        const m = parseInt($('#modal-input-m').val(), 10);
-        if (isNaN(m) || m <= 0) {
-            showAlert('Por favor, introduce un número de opiniones válido.', 'error');
-            return;
-        }
-        generateCreationForm(m);
-        $('#modal-step-1').hide();
-        $('#modal-step-2').show();
-    });
+    $('#edit-instance-button').on('click', function() { openCreationModal(currentData); });
 
     $('#modal-confirm-button').on('click', function() {
         const instanceData = getDataFromCreationForm();
@@ -111,9 +77,7 @@ $(document).ready(function () {
     });
 
     $('.modal-cancel-button').on('click', function() {
-        if (!currentData) {
-            resetUI();
-        }
+        if (!currentData) { resetUI(); }
         $('#create-modal').hide();
     });
     
@@ -136,33 +100,21 @@ $(document).ready(function () {
         const inputHtml = `
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                 <div class="md:col-span-5 space-y-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Parámetros Generales</h3>
-                        <ul class="text-sm space-y-2">
-                            ${createListGroupItem("Personas (n)", data.n)}
-                            ${createListGroupItem("Opiniones (m)", data.m)}
-                            ${createListGroupItem("Costo Máximo (ct)", data.ct, 'gray')}
-                            ${createListGroupItem("Movimientos Máx. (maxM)", data.maxM, 'gray')}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Población Inicial (p)</h3>
-                        <canvas id="inputChart"></canvas>
-                    </div>
+                    <div><h3 class="text-lg font-semibold text-gray-800 mb-2">Parámetros Generales</h3><ul class="text-sm space-y-2">
+                        ${createListGroupItem("Personas (n)", data.n)}
+                        ${createListGroupItem("Opiniones (m)", data.m)}
+                        ${createListGroupItem("Costo Máximo (ct)", data.ct, 'gray')}
+                        ${createListGroupItem("Movimientos Máx. (maxM)", data.maxM, 'gray')}
+                    </ul></div>
+                    <div><h3 class="text-lg font-semibold text-gray-800 mb-2">Población Inicial (p)</h3><canvas id="inputChart"></canvas></div>
                 </div>
                 <div class="md:col-span-7 space-y-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Vectores de Opinión</h3>
-                        <div class="overflow-auto max-h-52 border rounded-lg">
-                            <table class="w-full text-sm text-left text-gray-500">${createVectorTable(data)}</table>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Matriz de Costos (c)</h3>
-                        <div class="overflow-auto max-h-64 border rounded-lg">
-                            <table class="w-full text-sm text-center text-gray-600">${createMatrixTable(data.c, data.m)}</table>
-                        </div>
-                    </div>
+                    <div><h3 class="text-lg font-semibold text-gray-800 mb-2">Vectores</h3><div class="overflow-auto max-h-52 border rounded-lg">
+                        <table class="w-full text-sm text-left text-gray-500">${createVectorTable(data)}</table>
+                    </div></div>
+                    <div><h3 class="text-lg font-semibold text-gray-800 mb-2">Matriz de Costos (c)</h3><div class="overflow-auto max-h-64 border rounded-lg">
+                        <table class="w-full text-sm text-center text-gray-600">${createMatrixTable(data.c, data.m)}</table>
+                    </div></div>
                 </div>
             </div>`;
         $('#input-data-container').html(inputHtml).removeClass('opacity-0');
@@ -194,11 +146,11 @@ $(document).ready(function () {
                     <h3 class="text-lg font-semibold text-gray-800 mb-2">Resumen</h3>
                     <ul class="text-sm space-y-2">
                         ${createListGroupItem("Estado", data.status, "blue")}
+                        ${createListGroupItem("Tiempo de Ejecución", `${data.execution_time.toFixed(2)}s`, "blue")}
                         ${createListGroupItem("Extremismo Inicial", data.initial_extremism.toFixed(3), "gray")}
                         ${createListGroupItem("<strong>Extremismo Final</strong>", `<strong>${data.final_extremism.toFixed(3)}</strong>`, "green")}
                         ${createListGroupItem("Costo Total", data.total_cost.toFixed(2), "teal")}
                         ${createListGroupItem("Movimientos Totales", data.total_moves.toFixed(0), "teal")}
-                        ${createListGroupItem("Tiempo de Ejecución", `${data.execution_time.toFixed(2)}s`, "blue")}
                     </ul>
                 </div>
                 <div class="md:col-span-7"><h3 class="text-lg font-semibold text-gray-800 mb-2">Población Final</h3><canvas id="resultsChart"></canvas></div>
@@ -218,98 +170,99 @@ $(document).ready(function () {
         $('#solve-button').prop('disabled', true).html('Resolver');
     }
 
-    // --- FORMULARIO DE CREACIÓN DINÁMICO ---
+    // --- FORMULARIO DINÁMICO ---
     
     function openCreationModal(dataToEdit = null) {
         $('#create-modal').show();
-        if (dataToEdit) {
-            $('#modal-title').text('Editar Instancia Personalizada');
-            $('#modal-input-m').val(dataToEdit.m);
-            generateCreationForm(dataToEdit.m, dataToEdit);
-            $('#modal-step-1').hide();
-            $('#modal-step-2').show();
-        } else {
-            $('#modal-title').text('Crear Nueva Instancia');
-            $('#modal-input-m').val('');
-            $('#modal-step-1').show();
-            $('#modal-step-2').hide();
-        }
+        const title = dataToEdit ? 'Editar Instancia' : 'Crear Nueva Instancia';
+        $('#modal-title').text(title);
+        generateDynamicForm(dataToEdit);
     }
-
-    function generateCreationForm(m, data = null) {
-        const getVal = (path, index, defaultVal) => {
-            if (!data) return defaultVal;
-            if (path.includes('.')) {
-                const keys = path.split('.');
-                let val = data;
-                for (const key of keys) {
-                    if (val === undefined || val[key] === undefined) return defaultVal;
-                    val = val[key];
-                }
-                 return val[index];
-            }
-            return data[path] !== undefined ? (Array.isArray(data[path]) ? data[path][index] : data[path]) : defaultVal;
-        };
-
-        const form = $('#create-instance-form');
-        form.html(''); 
+    
+    function generateDynamicForm(data = null) {
+        const form = $('#instance-form');
+        form.html(''); // Limpiar formulario
+        const m = data ? data.m : (parseInt($('#form-input-m').val(), 10) || 5); // Valor inicial o actual
+        
         const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
         const labelClass = "block text-sm font-medium text-gray-700";
 
+        // Parámetros Generales (incluido 'm' que ahora es editable)
         let generalHtml = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
-                <div><label for="form-n" class="${labelClass}">Personas (n)</label><input type="number" id="form-n" class="${inputClass}" value="${getVal('n', null, 100)}"></div>
-                <div><label for="form-ct" class="${labelClass}">Costo Máximo (ct)</label><input type="number" step="any" id="form-ct" class="${inputClass}" value="${getVal('ct', null, 1000)}"></div>
-                <div><label class="${labelClass}">Opiniones (m)</label><input type="number" value="${m}" class="${inputClass}" disabled></div>
-                <div><label for="form-maxM" class="${labelClass}">Movimientos Máx. (maxM)</label><input type="number" id="form-maxM" class="${inputClass}" value="${getVal('maxM', null, 50)}"></div>
-            </div>`;
-        form.append(generalHtml);
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 mb-6 p-4 border rounded-lg">
+                <div><label for="form-input-n" class="${labelClass}">Personas (n)</label><input type="number" id="form-input-n" class="${inputClass}" value="${data?.n ?? 100}"></div>
+                <div><label for="form-input-m" class="${labelClass} text-blue-600 font-bold">Opiniones (m)</label><input type="number" id="form-input-m" class="${inputClass} border-blue-500" value="${m}" min="1"></div>
+                <div><label for="form-input-ct" class="${labelClass}">Costo Máx. (ct)</label><input type="number" step="any" id="form-input-ct" class="${inputClass}" value="${data?.ct ?? 1000}"></div>
+                <div><label for="form-input-maxM" class="${labelClass}">Mov. Máx. (maxM)</label><input type="number" id="form-input-maxM" class="${inputClass}" value="${data?.maxM ?? 50}"></div>
+            </div>
+            <div id="dynamic-form-parts"></div>`; // Contenedor para partes dinámicas
+        form.html(generalHtml);
+        
+        // Generar las partes dinámicas
+        buildDynamicFormParts(m, data);
 
+        // Añadir listener para el cambio en 'm'
+        $('#form-input-m').on('change', function() {
+            const new_m = parseInt($(this).val(), 10);
+            if (!isNaN(new_m) && new_m > 0) {
+                const currentFormData = getDataFromCreationForm(); // Guardar datos actuales
+                buildDynamicFormParts(new_m, currentFormData); // Redibujar con datos guardados
+            }
+        });
+    }
+
+    function buildDynamicFormParts(m, data = null) {
+        const container = $('#dynamic-form-parts');
+        container.html(''); // Limpiar
+        const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
+        const labelClass = "block text-sm font-medium text-gray-700";
+
+        // Vectores
         let vectorsHtml = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">`;
         ['p', 'ext', 'ce'].forEach(vec => {
             let inputs = '';
             for(let i=0; i<m; i++) {
-                const defVal = (vec === 'p') ? 10 : ((vec === 'ext') ? (Math.random()).toFixed(3) : (Math.random()*10).toFixed(2));
-                inputs += `<input type="number" step="any" class="${inputClass}" placeholder="Op. ${i+1}" value="${getVal(vec, i, defVal)}">`;
+                const val = data?.[vec]?.[i] ?? ((vec === 'p') ? 10 : (vec === 'ext' ? Math.random().toFixed(3) : (Math.random()*10).toFixed(2)));
+                inputs += `<input type="number" step="any" class="${inputClass}" placeholder="Op. ${i+1}" value="${val}">`;
             }
-            vectorsHtml += `<div><label class="${labelClass} mb-2">${vec.toUpperCase()}</label><div id="form-${vec}-container" class="space-y-2">${inputs}</div></div>`;
+            vectorsHtml += `<div><label class="${labelClass} mb-2">${vec.toUpperCase()}</label><div id="form-container-${vec}" class="space-y-2">${inputs}</div></div>`;
         });
         vectorsHtml += `</div>`;
-        form.append(vectorsHtml);
+        container.append(vectorsHtml);
 
-        let matrixHtml = `<label class="${labelClass} mb-2">Matriz de Costos (c)</label><div class="overflow-x-auto"><table id="form-c-matrix" class="min-w-full divide-y divide-gray-200 border">`;
+        // Matriz
+        let matrixHtml = `<label class="${labelClass} mb-2">Matriz de Costos (c)</label><div class="overflow-x-auto"><table id="form-table-c" class="min-w-full divide-y divide-gray-200 border">`;
         matrixHtml += '<thead class="bg-gray-50"><tr><th class="px-3 py-2"></th>';
         for (let j = 0; j < m; j++) { matrixHtml += `<th class="px-3 py-2 text-center text-xs uppercase">Op. ${j+1}</th>`; }
         matrixHtml += '</tr></thead><tbody>';
         for (let i = 0; i < m; i++) {
             matrixHtml += `<tr><td class="px-3 py-2 font-medium text-gray-900 bg-gray-50">Op. ${i+1}</td>`;
             for (let j = 0; j < m; j++) {
-                const defVal = (i === j) ? 0 : (Math.random() * 5).toFixed(2);
-                const cellVal = data ? getVal(`c.${i}`, j, defVal) : defVal;
-                matrixHtml += `<td class="p-1"><input type="number" step="any" value="${cellVal}" class="${inputClass} text-center" ${i===j ? 'disabled':''}></td>`;
+                const val = data?.c?.[i]?.[j] ?? ((i === j) ? 0 : (Math.random() * 5).toFixed(2));
+                matrixHtml += `<td class="p-1"><input type="number" step="any" value="${val}" class="${inputClass} text-center" ${i===j ? 'disabled':''}></td>`;
             }
             matrixHtml += '</tr>';
         }
         matrixHtml += '</tbody></table></div>';
-        form.append(matrixHtml);
+        container.append(matrixHtml);
     }
     
     function getDataFromCreationForm() {
         const data = {};
         try {
-            data.m = parseInt($('#create-instance-form input[value][disabled]').val(), 10);
-            data.n = parseInt($('#form-n').val(), 10);
-            data.ct = parseFloat($('#form-ct').val());
-            data.maxM = parseInt($('#form-maxM').val(), 10);
-            data.p = $('#form-p-container input').map((_, el) => parseInt($(el).val(), 10)).get();
-            data.ext = $('#form-ext-container input').map((_, el) => parseFloat($(el).val())).get();
-            data.ce = $('#form-ce-container input').map((_, el) => parseFloat($(el).val())).get();
+            data.m = parseInt($('#form-input-m').val(), 10);
+            data.n = parseInt($('#form-input-n').val(), 10);
+            data.ct = parseFloat($('#form-input-ct').val());
+            data.maxM = parseInt($('#form-input-maxM').val(), 10);
+            data.p = $('#form-container-p input').map((_, el) => parseInt($(el).val(), 10)).get();
+            data.ext = $('#form-container-ext input').map((_, el) => parseFloat($(el).val())).get();
+            data.ce = $('#form-container-ce input').map((_, el) => parseFloat($(el).val())).get();
             data.c = [];
             for (let i = 0; i < data.m; i++) {
-                const row = $(`#form-c-matrix tbody tr:eq(${i}) input`).map((_, el) => parseFloat($(el).val())).get();
+                const row = $(`#form-table-c tbody tr:eq(${i}) input`).map((_, el) => parseFloat($(el).val())).get();
                 data.c.push(row);
             }
-            if ([data.n, data.ct, data.maxM, ...data.p, ...data.ext, ...data.ce, ...data.c.flat()].some(v => v === null || isNaN(v))) return null;
+            if ([data.m, data.n, data.ct, data.maxM, ...data.p, ...data.ext, ...data.ce, ...data.c.flat()].some(v => v === null || isNaN(v))) return null;
         } catch(e) { return null; }
         return data;
     }
@@ -340,7 +293,7 @@ $(document).ready(function () {
 
     function createVectorTable(data) {
         let body = [...Array(data.m).keys()].map(i => `<tr class="bg-white border-b hover:bg-gray-50"><td class="py-3 px-4 font-bold text-gray-900">${i + 1}</td><td class="py-3 px-4">${data.p[i]}</td><td class="py-3 px-4">${data.ext[i]}</td><td class="py-3 px-4">${data.ce[i]}</td></tr>`).join('');
-        return `<thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="py-3 px-4">Op.</th><th class="py-3 px-4">Pob. (p)</th><th class="py-3 px-4">Valor (ext)</th><th class="py-3 px-4">Costo Extra (ce)</th></tr></thead><tbody>${body}</tbody>`;
+        return `<thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="py-3 px-4">Op.</th><th class="py-3 px-4">Pob. (p)</th><th class="py-3 px-4">Extrem. (ext)</th><th class="py-3 px-4">Costo Extra (ce)</th></tr></thead><tbody>${body}</tbody>`;
     }
 
     function createMatrixTable(matrix, size, highlight = false) {
@@ -353,7 +306,7 @@ $(document).ready(function () {
             }).join('');
             return `<tr><th class="py-2 px-3 bg-gray-100 font-semibold">Op. ${i + 1}</th>${cells}</tr>`;
         }).join('');
-        return `<thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="py-2 px-3 font-semibold whitespace-nowrap">Origen / Destino</th>${headers}</tr></thead><tbody>${body}</tbody>`;
+        return `<thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="py-2 px-3 font-semibold whitespace-nowrap">Origen/Destino</th>${headers}</tr></thead><tbody>${body}</tbody>`;
     }
     
     function switchTab(tabId) {
@@ -374,9 +327,4 @@ $(document).ready(function () {
             setTimeout(() => alert.remove(), 500);
         }, 5000);
     }
-
-    $('.tab').on('click', function () {
-        const tabId = $(this).data('tab');
-        switchTab(tabId);
-    });
 });
