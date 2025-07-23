@@ -80,6 +80,12 @@ $(document).ready(function () {
         if (!currentData) { resetUI(); }
         $('#create-modal').hide();
     });
+
+    // --- MANEJADOR DE PESTAÑAS (TABS) ---
+    $('.tab').on('click', function () {
+        const tabId = $(this).data('tab');
+        switchTab(tabId);
+    });
     
     // --- LÓGICA DE CARGA Y VISUALIZACIÓN ---
 
@@ -170,7 +176,7 @@ $(document).ready(function () {
         $('#solve-button').prop('disabled', true).html('Resolver');
     }
 
-    // --- FORMULARIO DINÁMICO ---
+    // --- FORMULARIO ---
     
     function openCreationModal(dataToEdit = null) {
         $('#create-modal').show();
@@ -181,13 +187,12 @@ $(document).ready(function () {
     
     function generateDynamicForm(data = null) {
         const form = $('#instance-form');
-        form.html(''); // Limpiar formulario
-        const m = data ? data.m : (parseInt($('#form-input-m').val(), 10) || 5); // Valor inicial o actual
+        form.html('');
+        const m = data ? data.m : (parseInt($('#form-input-m').val(), 10) || 5);
         
         const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
         const labelClass = "block text-sm font-medium text-gray-700";
 
-        // Parámetros Generales (incluido 'm' que ahora es editable)
         let generalHtml = `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 mb-6 p-4 border rounded-lg">
                 <div><label for="form-input-n" class="${labelClass}">Personas (n)</label><input type="number" id="form-input-n" class="${inputClass}" value="${data?.n ?? 100}"></div>
@@ -195,29 +200,26 @@ $(document).ready(function () {
                 <div><label for="form-input-ct" class="${labelClass}">Costo Máx. (ct)</label><input type="number" step="any" id="form-input-ct" class="${inputClass}" value="${data?.ct ?? 1000}"></div>
                 <div><label for="form-input-maxM" class="${labelClass}">Mov. Máx. (maxM)</label><input type="number" id="form-input-maxM" class="${inputClass}" value="${data?.maxM ?? 50}"></div>
             </div>
-            <div id="dynamic-form-parts"></div>`; // Contenedor para partes dinámicas
+            <div id="dynamic-form-parts"></div>`;
         form.html(generalHtml);
         
-        // Generar las partes dinámicas
         buildDynamicFormParts(m, data);
 
-        // Añadir listener para el cambio en 'm'
         $('#form-input-m').on('change', function() {
             const new_m = parseInt($(this).val(), 10);
             if (!isNaN(new_m) && new_m > 0) {
-                const currentFormData = getDataFromCreationForm(); // Guardar datos actuales
-                buildDynamicFormParts(new_m, currentFormData); // Redibujar con datos guardados
+                const currentFormData = getDataFromCreationForm();
+                buildDynamicFormParts(new_m, currentFormData);
             }
         });
     }
 
     function buildDynamicFormParts(m, data = null) {
         const container = $('#dynamic-form-parts');
-        container.html(''); // Limpiar
+        container.html('');
         const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
         const labelClass = "block text-sm font-medium text-gray-700";
 
-        // Vectores
         let vectorsHtml = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">`;
         ['p', 'ext', 'ce'].forEach(vec => {
             let inputs = '';
@@ -230,7 +232,6 @@ $(document).ready(function () {
         vectorsHtml += `</div>`;
         container.append(vectorsHtml);
 
-        // Matriz
         let matrixHtml = `<label class="${labelClass} mb-2">Matriz de Costos (c)</label><div class="overflow-x-auto"><table id="form-table-c" class="min-w-full divide-y divide-gray-200 border">`;
         matrixHtml += '<thead class="bg-gray-50"><tr><th class="px-3 py-2"></th>';
         for (let j = 0; j < m; j++) { matrixHtml += `<th class="px-3 py-2 text-center text-xs uppercase">Op. ${j+1}</th>`; }
