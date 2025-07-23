@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import time
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 
@@ -128,8 +129,15 @@ def solve_instance():
     
     command = ["minizinc", "--solver", "CoinBC", app.config['MINIZINC_MODEL_PATH'], dzn_path]
     try:
+        start_time = time.time()
         process = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', timeout=430, check=False)
+        end_time = time.time()
+
+        execution_time = end_time - start_time
+
         results = parse_minizinc_output(process.stdout or process.stderr, input_data['m'])
+        results['execution_time'] = execution_time
+
         return jsonify(results)
     except subprocess.TimeoutExpired:
         return jsonify({'error': 'La ejecución ha excedido el tiempo límite.', 'raw_output': 'Timeout'}), 500
