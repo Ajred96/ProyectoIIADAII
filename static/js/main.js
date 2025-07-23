@@ -154,6 +154,10 @@ $(document).ready(function () {
                     </div>
                 </div>`
             : '';
+        
+        const executionTimeHtml = data.execution_time
+            ? createListGroupItem("Tiempo de Ejecución", `${data.execution_time.toFixed(3)} seg.`, "purple")
+            : '';
 
         const fullResultsHtml = `
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -165,6 +169,7 @@ $(document).ready(function () {
                         ${createListGroupItem("<strong>Extremismo Final</strong>", `<strong>${data.final_extremism.toFixed(3)}</strong>`, "green")}
                         ${createListGroupItem("Costo Total", data.total_cost.toFixed(2), "teal")}
                         ${createListGroupItem("Movimientos Totales", data.total_moves.toFixed(2), "teal")}
+                        ${executionTimeHtml}
                     </ul>
                 </div>
                 <div class="md:col-span-7">
@@ -204,7 +209,8 @@ $(document).ready(function () {
             blue: 'bg-blue-100 text-blue-800',
             gray: 'bg-gray-100 text-gray-800',
             green: 'bg-green-100 text-green-800',
-            teal: 'bg-teal-100 text-teal-800'
+            teal: 'bg-teal-100 text-teal-800',
+            purple: 'bg-purple-100 text-purple-800'
         };
         return `<li class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><span>${label}</span><span class="font-mono font-semibold px-2 py-1 rounded-md ${colors[color]}">${value}</span></li>`;
     }
