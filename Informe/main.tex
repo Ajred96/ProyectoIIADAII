@@ -1,0 +1,167 @@
+%%%%%%% PAQUETES Y CONFIGURACIONES %%%%%%% INICIO
+\documentclass[11pt,letter]{article}
+
+% Idioma y codificación
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+% Diseño de página
+\usepackage[left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm]{geometry}
+\usepackage{setspace}
+\usepackage{float}
+
+% Tipografía y matemáticas
+\usepackage{amsmath}
+\usepackage{pifont}
+
+% Colores (debe ir antes de tcolorbox y pgfplots)
+\usepackage[table,xcdraw]{xcolor}
+
+% Gráficos y figuras
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Tablas y cajas
+\usepackage{booktabs}
+\usepackage[most]{tcolorbox}
+\usepackage{mdframed}
+
+% Algoritmos y código
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{listings}
+
+% Referencias y notas
+\usepackage{nameref}
+\usepackage{natbib}
+\usepackage{endnotes}
+
+% Hipervínculos (último siempre que sea posible)
+\usepackage{hyperref}
+
+%Para dar ancho a tabla
+\usepackage{tabularx}
+
+% Centrado de tablas
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}} % Centrado horizontal y vertical
+ 
+
+%%%%%%% PAQUETES Y CONFIGURACIONES %%%%%%% FIN
+
+
+\begin{document}
+\onehalfspacing
+
+%%%%%%% PORTADA %%%%%%% INICIO
+\begin{titlepage}
+\centering
+\includegraphics[width=0.15\textwidth]{resources/universidad-del-valle.png}\par\vspace{1cm}
+{\scshape\LARGE Universidad del Valle \par}
+{\scshape\Large Facultad de Ingeniería \par}
+{\scshape\Large Escuela de Ingeniería de Sistemas y Computación \par}
+\vspace{2cm}
+
+{\Large \textbf{Moderando el Conflicto Interno de Opiniones en una Red Social}}\\
+
+\vspace{2cm}
+    {\large \textbf{Anderson Johan Alban Angulo - 202310006}}\\
+    {\large \textbf{Andrés Felipe Asprilla Urrutia - 202224101 }}\\
+    {\large \textbf{Andrés Mauricio Ortiz Bermúdez - 202110330}}\\
+    {\large \textbf{Carlos Mauricio Tovar Parra - 201741699}}\\
+\vspace{2cm}
+
+    \Large\textbf{Profesor}\par
+    {\large \textbf{Jesús Alexander Aranda Bueno Ph.D.}}\\
+\vspace{1.4cm}
+    \Large\textbf{Curso}\par
+    {\large \textbf{Análisis y Diseño de Algoritmos II (750020C)}}\\
+\vspace{1cm}
+{\large {19 de abril de 2025}\par}
+\end{titlepage}
+%%%%%%% PORTADA %%%%%%% FIN
+
+%%%%%%% INDICE %%%%%%% INICIO
+\tableofcontents
+%%%%%%% INDICE %%%%%%% FIN
+\newpage
+
+%%%%%%% INTRODUCCIÓN %%%%%%% INICIO
+\section{Introducción}
+
+El fenómeno del extremismo ha cobrado especial relevancia en las sociedades actuales, caracterizándose por una polarización creciente de las opiniones en grupos claramente diferenciados. Este proyecto aborda el problema de la minimización del extremismo (MinExt), el cual busca reducir el nivel total de extremismo dentro de una población, tomando como base un conjunto inicial de opiniones diversas. Para esto, se plantea la implementación de un modelo de optimización que permita decidir cuáles personas cambiarán sus opiniones iniciales, con el objetivo de alcanzar la menor cantidad posible de extremismo, considerando costos limitados en términos económicos y logísticos.
+
+El presente trabajo se desarrolla mediante técnicas avanzadas de programación entera mixta y optimización combinatoria, utilizando el método Branch and Bound y herramientas de modelamiento como MiniZinc. El proyecto también incluye el diseño de una interfaz gráfica que permite a un usuario final interactuar de manera intuitiva con el modelo desarrollado.
+
+%%%%%%% INTRODUCCIÓN %%%%%%% FIN
+
+\newpage
+
+%%%%%%% FUNCIONES AUXILIARES %%%%%%% INICIO
+\section{Funciones auxiliares}
+
+  En este proyecto no se emplean funciones auxiliares adicionales en el modelo MiniZinc proporcionado. La solución al problema se construye íntegramente mediante variables, parámetros, restricciones y la función objetivo definida explícitamente.
+
+%%%%%%% FUNCIONES AUXILIARES %%%%%%% FIN
+\newpage
+%%%%%%% FUERZA BRUTA %%%%%%% INICIO
+\section{El modelo: Descripción y Justificación de su Adecuación}
+
+El modelo implementado para resolver el problema \texttt{MinExt} se fundamenta en los siguientes componentes:
+
+\begin{description}
+  \item[$n$] Número total de personas en la población.
+  \item[$m$] Número de posibles opiniones.
+  \item[$p_i$] Número inicial de personas con opinión $i$.
+  \item[$\mathit{ext}_i$] Valor de extremismo de la opinión $i$.
+  \item[$c_{i,j}$] Costo de mover personas de opinión $i$ a opinión $j$.
+  \item[$c^e_i$] Costo extra por mover personas hacia opiniones inicialmente desocupadas.
+  \item[$c_t$] Costo total máximo permitido.
+  \item[$\max M$] Número máximo permitido de movimientos totales.
+\end{description}
+
+\paragraph{Variable de decisión}
+\[
+  x_{i,j} \quad\coloneqq\quad \text{Número de personas que se mueven de la opinión }i\text{ a la }j.
+\]
+
+\paragraph{Restricciones principales}
+\begin{itemize}
+  \item $\displaystyle \sum_{i,j} c_{i,j}\,x_{i,j} + \sum_{i:\,p_i=0} c^e_i \sum_j x_{i,j} \;\le\; c_t$
+  \item $\displaystyle \sum_{i,j} x_{i,j} \;\le\; \max M$
+  \item Para todo $i$: $\displaystyle \sum_j x_{i,j} \;\le\; p_i$
+  \item $x_{i,i} = 0\quad\forall\,i$
+  \item $\displaystyle \sum_{i,j} x_{i,j} \le n$
+  \item No se permiten movimientos entre opiniones de igual nivel de extremismo.
+\end{itemize}
+
+\paragraph{Función objetivo}
+\[
+  \min\;\sum_{i,j} (p_i - \sum_{k} x_{i,k} + \sum_{\ell} x_{\ell,i})\;\mathit{ext}_i
+\]
+que minimiza el extremismo total de la población resultante.
+
+\medskip
+
+La justificación del modelo radica en que incorpora explícitamente la reducción de extremismo bajo restricciones de costo y número de movimientos, modelando las limitaciones prácticas del contexto real y garantizando soluciones factibles y relevantes.
+
+\section{Detalles importantes de implementación}
+
+Al implementar el modelo en MiniZinc se consideraron los siguientes aspectos críticos:
+
+\begin{itemize}
+  \item \textbf{Costos adicionales:} Se aplica el costo extra $c^e_i$ sólo si $p_i=0$, mediante cláusulas \texttt{if} para garantizar correcta contabilización.
+  \item \textbf{Límite de movimientos:} Se define claramente la restricción \texttt{sum(x)} $\le\max M$, contabilizando cada cambio como $|j-i|$ movimientos.
+  \item \textbf{Validación de factibilidad:} Todas las restricciones evitan transferencias internas o exceder la población disponible.
+  \item \textbf{Variables auxiliares:} Se usan para calcular la distribución final:
+    \[
+      p'_i = p_i - \sum_k x_{i,k} + \sum_\ell x_{\ell,i}
+    \]
+    facilitando la presentación de resultados.
+  \item \textbf{Salida detallada:} Se generan informes con el estado inicial, el estado final, niveles de extremismo y movimientos realizados, listos para visualizar en interfaz gráfica.
+\end{itemize}
+
+Estos elementos aseguran una implementación robusta, eficiente y fácilmente verificable para pruebas internas y validación externa mediante la interfaz gráfica.
+
+
+\end{document}
