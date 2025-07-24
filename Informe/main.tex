@@ -13,6 +13,8 @@
 % Tipografía y matemáticas
 \usepackage{amsmath}
 \usepackage{pifont}
+\usepackage{amsfonts}
+
 
 % Colores (debe ir antes de tcolorbox y pgfplots)
 \usepackage[table,xcdraw]{xcolor}
@@ -62,7 +64,8 @@
 {\scshape\Large Escuela de Ingeniería de Sistemas y Computación \par}
 \vspace{2cm}
 
-{\Large \textbf{Moderando el Conflicto Interno de Opiniones en una Red Social}}\\
+{\Large \textbf{Minimizando el Extremismo Presente en
+ una Población (MinExt)}}\\
 
 \vspace{2cm}
     {\large \textbf{Anderson Johan Alban Angulo - 202310006}}\\
@@ -77,7 +80,7 @@
     \Large\textbf{Curso}\par
     {\large \textbf{Análisis y Diseño de Algoritmos II (750020C)}}\\
 \vspace{1cm}
-{\large {19 de abril de 2025}\par}
+{\large {26 de julio de 2025}\par}
 \end{titlepage}
 %%%%%%% PORTADA %%%%%%% FIN
 
@@ -96,89 +99,168 @@ El presente trabajo se desarrolla mediante técnicas avanzadas de programación 
 %%%%%%% INTRODUCCIÓN %%%%%%% FIN
 \newpage
 
-%%%%%%% DESCRIPCION Y JUSTIFICACION %%%%%%% INICIO
+
+\newpage
+%%%%%%% FUERZA BRUTA %%%%%%% INICIO
 \section{El modelo: Descripción y Justificación de su Adecuación}
 
 El modelo implementado para resolver el problema \texttt{MinExt} se fundamenta en los siguientes componentes:
 
+\subsection{Parámetros de Entrada}
+\begin{itemize}
+  \item $n$: Número total de personas en la población.
+  \item $m$: Número de posibles opiniones.
+  \item $p_i$: Número inicial de personas con opinión $i$.
+  \item $\mathit{ext}_i$: Valor de extremismo de la opinión $i$.
+  \item $c_{i,j}$: Costo de mover personas de opinión $i$ a opinión $j$.
+  \item $c^e_i$: Costo extra por mover personas hacia opiniones inicialmente desocupadas.
+  \item $c_t$: Costo total máximo permitido.
+  \item $\max M$: Número máximo permitido de movimientos totales.
+\end{itemize}
+
+\subsection{Variables de Decisión}
 \begin{description}
-  \item[$n$] Número total de personas en la población.
-  \item[$m$] Número de posibles opiniones.
-  \item[$p_i$] Número inicial de personas con opinión $i$.
-  \item[$\mathit{ext}_i$] Valor de extremismo de la opinión $i$.
-  \item[$c_{i,j}$] Costo de mover personas de opinión $i$ a opinión $j$.
-  \item[$c^e_i$] Costo extra por mover personas hacia opiniones inicialmente desocupadas.
-  \item[$c_t$] Costo total máximo permitido.
-  \item[$\max M$] Número máximo permitido de movimientos totales.
+    \item[Variable] $x_{i,j}$
+    \item[Definici\'on] Representa el n\'umero de personas que cambiaron de la opini\'on $i$ a la opini\'on $j$.
+    \item[Dominio] $i, j \in [1, m]$, donde $x_{i,j} \in \mathbb{N}$.
+    \item[Prop\'osito] Esta variable permite cuantificar y analizar las transiciones entre diferentes opiniones, proporcionando una base para evaluar la din\'amica de cambio de opini\'on en el modelo y para aplicar estrategias de moderaci\'on si es necesario.
 \end{description}
 
-\paragraph{Variable de decisión}
-\[
-  x_{i,j} \quad\coloneqq\quad \text{Número de personas que se mueven de la opinión }i\text{ a la }j.
-\]
 
-\paragraph{Restricciones principales}
+\subsection{Restricciones}
 \begin{itemize}
-  \item $\displaystyle \sum_{i,j} c_{i,j}\,x_{i,j} + \sum_{i:\,p_i=0} c^e_i \sum_j x_{i,j} \;\le\; c_t$
-  \item $\displaystyle \sum_{i,j} x_{i,j} \;\le\; \max M$
-  \item Para todo $i$: $\displaystyle \sum_j x_{i,j} \;\le\; p_i$
-  \item $x_{i,i} = 0\quad\forall\,i$
-  \item $\displaystyle \sum_{i,j} x_{i,j} \le n$
-  \item No se permiten movimientos entre opiniones de igual nivel de extremismo.
+    \item \textbf{Costo Máximo (Lineal):} 
+    Esta restricción limita el costo total de todos los movimientos a un presupuesto máximo \texttt{ct}. Se clasifica como \textbf{lineal} porque la variable \texttt{costo} es de tipo \texttt{float} (continua).
+    $$
+    \text{costo} \le \text{ct}
+    $$
+
+    \item \textbf{Límite de Movimientos (Lineal y Entera):}
+    Asegura que el total de movimientos realizados no supere el límite \texttt{maxM}. Es una restricción \textbf{lineal y entera} porque la variable \texttt{movimientosTotales} es de tipo \texttt{int} y se compara con una constante entera.
+    $$
+    \text{movimientosTotales} \le \text{maxM}
+    $$
+
+    \item \textbf{Conservación de la Población de Origen (Lineal y Entera):}
+    Para cada opinión $i$, esta restricción clave impide que se muevan más personas de las que existen inicialmente en esa opinión ($p_i$). Es \textbf{lineal y entera}, ya que opera sobre sumas de las variables enteras $x_{i,j}$.
+    $$
+    \forall i \in [1, m]: \sum_{j=1}^{m} x_{i,j} \le p_i
+    $$
+
+    \item \textbf{Prohibición de Movimientos Nulos (Lineal y Entera):}
+    Impide las transiciones de una opinión a sí misma, fijando la diagonal de la matriz $x$ a cero. Es una restricción simple \textbf{lineal y entera}.
+    $$
+    \forall i \in [1, m]: x_{i,i} = 0
+    $$
+
+    \item \textbf{Límite de Población Total (Lineal y Entera):}
+    Garantiza que el número total de personas movidas no exceda la población total $n$. Es \textbf{lineal y entera} porque \texttt{personaOpinion} es \texttt{int}.
+    $$
+    \text{personaOpinion} \le n
+    $$
+
+    \item \textbf{Movimientos entre Extremismos Iguales (Lineal y Entera):}
+    Prohíbe mover personas entre dos opiniones distintas si estas comparten el mismo valor de extremismo. Es una restricción \textbf{lineal y entera} que reduce el espacio de búsqueda.
+    $$
+    \forall i, j \in [1, m] \text{ donde } \text{ext}_i = \text{ext}_j \implies x_{i,j} = 0
+    $$
+    
+    \item \textbf{No Negatividad (De Cota):}
+    Son restricciones de cota que aseguran que las variables no tomen valores negativos. Son un tipo fundamental de restricción lineal y entera.
+    \begin{itemize}
+        \item $\text{costo} \ge 0$
+        \item $\text{movimientosTotales} \ge 0$
+        \item $\forall i, j \in [1, m]: x_{i,j} \ge 0$
+    \end{itemize}
+\end{itemize}
+\subsection{Función Objetivo y Propósito del Modelo}
+
+\subsubsection{Fórmula del Objetivo}
+El objetivo principal del modelo es \textbf{minimizar} el extremismo total de la población en su estado final. La función objetivo se define como:
+
+$$
+\text{minimizar } \sum_{i=1}^{m} \text{nueva\_p}_i \cdot \text{ext}_i
+$$
+
+Donde $\text{nueva\_p}_i$ es una variable que representa la población final en la opinión $i$ después de aplicar todos los movimientos $x_{i,j}$.
+
+\subsubsection{Explicación y Justificación}
+
+\paragraph{Explicación:} 
+La función objetivo calcula una métrica de \textbf{extremismo agregado} para toda la población. Esto se logra a través de una suma ponderada: para cada opinión posible, se multiplica su extremismo (el parámetro $ext_i$) por el número de personas que finalmente pertenecen a esa opinión (la variable $nueva\_p_i$). De esta manera, las opiniones con valores altos de extremismo y una gran cantidad de adherentes contribuyen más al valor total de la función.
+
+\paragraph{Justificación:}
+El propósito fundamental del modelo es encontrar la estrategia de moderación más efectiva que se ajuste a las restricciones de recursos (como el costo $ct$ y el número de movimientos $maxM$). Al establecer la minimización del extremismo total como el objetivo, el modelo no se limita a realizar movimientos al azar. En cambio, el solver está instruido para encontrar la combinación de movimientos $(x_{i,j})$ que deliberadamente desplace a la población de opiniones más extremas a otras menos extremas, resultando en el menor valor posible de la función objetivo.
+
+\section{Datos Relevantes de la Implementación}
+
+Para llevar a la práctica la solución del problema \texttt{MinExt}, se desarrolló una aplicación web que facilita la interacción del usuario con el modelo de optimización, desde la carga de datos hasta la visualización de los resultados. La arquitectura de la solución se basa en una clara separación entre el cliente y el servidor.
+
+\paragraph{Desarrollo del Backend:} El servidor de la aplicación fue desarrollado en \textbf{Python} utilizando el micro-framework \textbf{Flask}, el cual se encarga de gestionar las rutas y la lógica de negocio. El backend es responsable de recibir los archivos de instancia \texttt{.txt} cargados por el usuario, validarlos y procesarlos. Una vez que los datos son parseados, el servidor genera dinámicamente un archivo de datos en formato \texttt{.dzn}, que es el formato requerido por MiniZinc para definir los parámetros de una instancia específica del problema. Posteriormente, invoca al motor de \textbf{MiniZinc} a través de un subproceso del sistema, especificando el uso del solver \textbf{Coin-BC (COIN-OR Branch and Cut)}. Una vez que el solver finaliza, el backend captura la salida, la procesa para extraer las métricas clave y la envía al frontend en un formato JSON estructurado.
+
+\paragraph{Desarrollo del Frontend:} La interfaz de usuario fue construida con \textbf{HTML}, \textbf{CSS} y \textbf{JavaScript}. Para la manipulación dinámica del contenido y la comunicación asíncrona con el servidor se utilizó la biblioteca \textbf{jQuery}, que permite realizar solicitudes AJAX para enviar el archivo de instancia y recibir los resultados sin necesidad de recargar la página. La presentación visual de los datos se enriquece mediante el uso de \textbf{Chart.js}, que se utiliza para mostrar tanto la distribución inicial de la población como la distribución final obtenida tras la optimización. El diseño y la maquetación se apoyan en el framework de CSS \textbf{TailwindCSS}.
+
+\paragraph{Flujo de Interacción:} El proceso completo es transparente para el usuario final. Comienza cuando el usuario selecciona un archivo de instancia en la interfaz. El frontend envía este archivo al servidor Flask. El servidor lo procesa, ejecuta el modelo de optimización y, tras obtener una respuesta del solver, la devuelve al cliente. Finalmente, el frontend interpreta los datos recibidos y actualiza la vista dinámicamente, mostrando tablas con resúmenes numéricos, la matriz de movimientos y gráficos comparativos que permiten un análisis visual e inmediato de la efectividad de la solución encontrada.
+
+\paragraph{Descripción del modelo en MiniZinc.}
+La implementación del problema se materializó en un modelo declarativo utilizando el lenguaje MiniZinc. El diseño del modelo inicia con la definición de un conjunto de \textbf{parámetros de entrada} que caracterizan cualquier instancia del problema, como la población, los costos y los niveles de extremismo. El núcleo del problema reside en la \textbf{variable de decisión} principal, una matriz \texttt{x} que representa el flujo de personas entre cada par de opiniones. Para mejorar la legibilidad y la modularidad, se utilizan \textbf{variables} que encapsulan cálculos complejos, como el costo total (incluyendo una lógica condicional para los cargos extra), el total de movimientos y la distribución final de la población. El comportamiento del sistema está regido por un conjunto de \textbf{restricciones} explícitas que definen el espacio de soluciones factibles, asegurando el cumplimiento de los límites de recursos, la conservación de la población y las reglas lógicas del negocio. Finalmente, el modelo establece una \textbf{función objetivo} clara: minimizar el extremismo total en la distribución final de opiniones, instruyendo así al solver para que encuentre la solución óptima entre todas las configuraciones posibles.
+
+
+\begin{tcolorbox}[colback=green!5!white, colframe=green!50!black, title=Factibilidad y Escalabilidad de la Solución]
+El tiempo necesario para encontrar una solución válida depende directamente del tamaño de la población (n) y del número de posibles opiniones (m), ya que estos parámetros influyen en la complejidad y el costo del modelo. Cuanto mayor sean n y m, mayor será el costo y el tiempo de procesamiento. Además, el número de recursos disponibles también impacta en la rapidez con la que el modelo puede generar una solución. Para asegurar que la solución sea tanto precisa como factible, el modelo toma en cuenta restricciones clave, incluyendo limitaciones en el número de movimientos y los costos adicionales asociados con los cambios de opiniones no representadas inicialmente. Esto permite respetar los límites de recursos y garantiza que las soluciones propuestas sean realistas y alcanzables.
+        \end{tcolorbox}
+\section{Análisis Branch and Bound}
+
+El árbol de búsqueda generado por el solver Gecode/Gist proporciona un mapa visual del proceso de razonamiento seguido para encontrar la solución óptima. A través del método \textit{Branch and Bound}, el solver explora sistemáticamente el espacio de soluciones, podando ramas que no pueden conducir a un resultado mejor que el ya encontrado. A continuación, se detalla el recorrido del árbol paso a paso.
+
+\subsubsection*{Instancia de Prueba Utilizada}
+A continuación se presenta la instancia en formato \texttt{.dzn} que fue resuelta para generar el árbol de búsqueda analizado. Los parámetros de costo (\texttt{ct}) y movimientos (\texttt{maxM}) fueron ajustados para forzar al solver a tomar decisiones de ramificación estratégicas.
+
+\begin{itemize}
+    \item $n = 20$
+    \item $m = 5$
+    \item $p_i = [8, 6, 4, 2, 0]$
+    \item $\mathit{ext}_i = [1.0, 0.8, 0.5, 0.2, 0.1]$
+    \item $c_{i,j} = \bordermatrix{
+              & \mathbf{1} & \mathbf{2} & \mathbf{3} & \mathbf{4} & \mathbf{5} \cr
+        \mathbf{1} & 0   & 8.0 & 5.0 & 3.0 & 1.0 \cr
+        \mathbf{2} & 10.0& 0   & 4.0 & 2.0 & 3.0 \cr
+        \mathbf{3} & 15.0& 12.0& 0   & 1.0 & 2.0 \cr
+        \mathbf{4} & 18.0& 15.0& 12.0& 0   & 1.0 \cr
+        \mathbf{5} & 25.0& 22.0& 20.0& 18.0& 0 \cr
+    }$
+    \item $c^e_j = [10.0, 10.0, 10.0, 10.0, 40.0]$
+    \item $c_t = 6.0$
+    \item $\max M = 7$
 \end{itemize}
 
-\paragraph{Función objetivo}
-\[
-  \min\;\sum_{i,j} (p_i - \sum_{k} x_{i,k} + \sum_{\ell} x_{\ell,i})\;\mathit{ext}_i
-\]
-que minimiza el extremismo total de la población resultante.
+\subsubsection*{Visualización del Árbol de Búsqueda}
+La ejecución de la instancia anterior con el solver Gecode/Gist generó el siguiente árbol de búsqueda, que sirve como base para el análisis del recorrido.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=0.4\textwidth]{resources/branchandbound.png}
+            \caption{Expansión del Arbol Branch and Bound.}
+        \end{figure}
 
-\medskip
+\paragraph{Paso 1 - El Punto de Partida (Nodo Raíz):}
+La búsqueda se inicia en el nodo raíz (\textbf{el círculo azul superior}). En este estado inicial, el solver solo ha procesado los parámetros de entrada y las restricciones. Las variables de decisión aún no tienen valores fijos, sino que se representan por sus dominios iniciales, que son amplios y reflejan todas las posibilidades teóricas. Por ejemplo, el costo potencial se encuentra en un rango inicial de \texttt{[0..19.4]}, y las variables de movimiento (\texttt{x}) permiten múltiples transiciones. El objetivo en este punto es comenzar a tomar decisiones para acotar este vasto espacio de búsqueda.
 
-La justificación del modelo radica en que incorpora explícitamente la reducción de extremismo bajo restricciones de costo y número de movimientos, modelando las limitaciones prácticas del contexto real y garantizando soluciones factibles y relevantes.
+\paragraph{Paso 2 - Exploración Inicial y Poda por Infactibilidad:}
+El solver desciende por el árbol y comienza a tomar las primeras decisiones. En los niveles superiores, se encuentra rápidamente con nodos de fallo (\textbf{los cuadrados rojos}). Estos nodos representan estados en los que se ha violado una o más restricciones de manera irreparable. Por ejemplo, al intentar un movimiento, el costo acumulado puede haber excedido el límite \texttt{ct} o el número de movimientos el límite \texttt{maxM}. Al detectar esta infactibilidad, el solver aplica la técnica de \textit{poda (pruning)}, descartando por completo estas ramas y evitando así una exploración innecesaria. El solver retrocede (backtracking) y continúa por el único camino que, hasta el momento, sigue siendo viable.
 
-%%%%%%% DESCRIPCION Y JUSTIFICACION %%%%%%% FIN
-
-%%%%%%% DETALLES IMPORTANTES DE LA IMPLEMENTACION %%%%%%% INICIO
-\section{Detalles importantes de implementación}
-
-Al implementar el modelo en MiniZinc se consideraron los siguientes aspectos críticos:
-
+\paragraph{Paso 3 - El Punto de Ramificación (El Triángulo Rojo):}
+A medida que desciende, el solver llega a un punto crítico, representado por el \textbf{triángulo rojo}. Este nodo es un \textbf{punto de ramificación (branching point)}. Aparece porque la simple propagación de restricciones ya no es suficiente para que el solver deduzca el siguiente paso. Se enfrenta a un dilema y debe tomar una decisión estratégica sobre una variable que aún no está fija. Para resolverlo, crea dos o más ramas nuevas, una para cada posible decisión. En este caso, el análisis de la expansión del triángulo revela lo siguiente:
 \begin{itemize}
- \item \textbf{Funciones auxiliares:} No se emplean funciones auxiliares adicionales en el modelo MiniZinc proporcionado. La solución al problema se construye íntegramente mediante variables, parámetros, restricciones y la función objetivo definida explícitamente.
-  \item \textbf{Costos adicionales:} Se aplica el costo extra $c^e_i$ sólo si $p_i=0$, mediante cláusulas \texttt{if} para garantizar correcta contabilización.
-  \item \textbf{Límite de movimientos:} Se define claramente la restricción \texttt{sum(x)} $\le\max M$, contabilizando cada cambio como $|j-i|$ movimientos.
-  \item \textbf{Validación de factibilidad:} Todas las restricciones evitan transferencias internas o exceder la población disponible.
-  \item \textbf{Variables auxiliares:} Se usan para calcular la distribución final:
-    \[
-      p'_i = p_i - \sum_k x_{i,k} + \sum_\ell x_{\ell,i}
-    \]
-    facilitando la presentación de resultados.
-  \item \textbf{Salida detallada:} Se generan informes con el estado inicial, el estado final, niveles de extremismo y movimientos realizados, listos para visualizar en interfaz gráfica.
+    \item \textbf{Exploración de la Rama Derecha:} El solver elige explorar una de las nuevas ramas. Este camino resulta ser infructuoso. Al seguirlo, los nodos subsiguientes (\textbf{los cuadrados rojos dentro de la expansión del triángulo}) rápidamente violan una restricción. En este caso, aunque el costo se mantenía dentro del rango, es probable que se haya superado el número máximo de movimientos permitidos (\texttt{maxM}). El solver poda esta sub-rama por completo.
+    \item \textbf{Exploración de la Rama Izquierda:} Tras el fallo anterior, el solver retrocede y explora la otra alternativa creada en el punto de ramificación. Este camino resulta ser prometedor y es el que el solver continuará explorando para buscar la solución óptima.
 \end{itemize}
 
-Estos elementos aseguran una implementación robusta, eficiente y fácilmente verificable para pruebas internas y validación externa mediante la interfaz gráfica.
-%%%%%%% DETALLES IMPORTANTES DE LA IMPLEMENTACION %%%%%%% FIN
+\paragraph{Paso 4 - Búsqueda de Soluciones y Mejora de la Cota:}
+Continuando por el camino viable, el solver encuentra sus primeras soluciones completas y factibles, representadas por los \textbf{rombos verdes}. La primera de estas soluciones establece la \textbf{cota superior inicial (upper bound)} para la función objetivo (el \textit{récord a batir} de extremismo). Cada vez que se encuentra una nueva solución factible con un valor de extremismo inferior al récord actual, esta nueva solución se convierte en la mejor encontrada hasta ahora y la cota superior se actualiza. Esta cota es fundamental para el algoritmo, ya que le permite podar cualquier otra rama que, según sus cálculos, no tenga el potencial de generar una solución mejor que la que ya posee.
 
-\newpage
-%%%%%%% ANALISIS DE LOS ARBOLES %%%%%%% INICIO
-\section{Análisis de los árboles generados por el modelo}
+\paragraph{Paso 5 - Convergencia a la Solución Óptima:}
+Finalmente, tras haber explorado o podado todas las ramas del árbol, el solver llega al \textbf{rombo naranja}. Este nodo representa la \textbf{solución óptima final}. En este punto, todas las variables de decisión tienen un valor específico. Para este problema, la solución óptima consistió en mover 4 personas de la opinión 3 a la 4, con un costo total de 4.8 y una distribución final de la población de \texttt{[8, 6, 0, 6, 0]}. El solver puede garantizar que esta es la mejor solución posible porque todas las demás alternativas han sido sistemáticamente evaluadas y descartadas, ya sea por ser infactibles o por conducir a soluciones de peor calidad que la óptima encontrada.
 
-%%%%%%% ANALISIS DE LOS ARBOLES %%%%%%% FIN
-\newpage
-
-%%%%%%% PRUEBAS %%%%%%% INICIO
-\section{Descripción de las pruebas}
-
-%%%%%%% PRUEBAS %%%%%%% FIN
-\newpage
-
-%%%%%%% ANALISIS DE LOS RESULTADOS %%%%%%% INICIO
-\section{Análisis de los resultados}
-
-%%%%%%% ANALISIS DE LOS RESULTADOS %%%%%%% FIN
-
-
-
+\section{}
 
 \end{document}
