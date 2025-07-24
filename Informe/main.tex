@@ -265,6 +265,13 @@ Finalmente, tras haber explorado o podado todas las ramas del árbol, el solver 
 \section{Pruebas}
 
 \subsection{Rendimiento del equipo}
+Las pruebas fueron ejecutadas en un equipo con sistema operativo Windows 11 Pro, equipado con un procesador Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz, con 6 núcleos físicos y 12 hilos lógicos, y 64 GB de memoria RAM. Para la resolución de las instancias se utilizó MiniZinc versión 2.9.3 (build 1832600886) junto con el solver COIN-BC 2.10.12/1.17.10. Este entorno computacional permitió llevar a cabo simulaciones de alta demanda, haciendo posible procesar casos complejos con grandes cantidades de personas, opiniones y restricciones.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{resources/rendimientodelequipo.jpg}
+    \caption{Rendimiento del equipo en el que se realizaron las pruebas}
+\end{figure}
+
 
 \subsection{Resultados obtenidos con las intancias de la batería de pruebas}
 
@@ -342,7 +349,7 @@ A partir de los resultados obtenidos en la batería de pruebas, es importante re
 
 
 \subsubsection*{Gráfica de Extremismo inicial y Extremismo final}
-
+La siguiente gráfica corresponde a una comparación entre el extremismo inicial proporcionado y el extremismo final obtenido con el modelo. Se puede evidenciar que el extremismo final es considerablemente menor que el inicialmente proporcionado, lo cual refleja la eficiencia del modelo.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/extremismoiyf.png}
@@ -350,11 +357,32 @@ A partir de los resultados obtenidos en la batería de pruebas, es importante re
 \end{figure}
 
 \subsubsection*{Grafica de Costo total y Extremismo final}
+La siguiente gráfica permite observar que, en general, a medida que aumenta el costo total disponible, el extremismo final tiende a disminuir. Esto indica que el modelo es capaz de reducir la polarización cuando se le otorgan más recursos para realizar movimientos. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/costototalvsextremismofinal.png}
     \caption{Comparación entre el costo total y el extremismo final obtenidos en las pruebas}
+\end{figure}
+
+\subsection{Gráfica de Costo máximo y Costo total}
+
+A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene significativamente por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/costomaximoycostototal.png}
+    \caption{Comparación entre el costo máximo asignado y el costo total obtenido por el modelo}
+\end{figure}
+
+
+\subsubsection*{Gráfica de Movimientos máximos permitidos y Movimientos totales}
+La siguiente gráfica evidencia  que en la mayoría de los casos, se observa que los movimientos totales tienden a ser iguales o ligeramente inferiores al máximo permitido, lo que indica que el modelo aprovecha casi todo el margen de acción disponible para cumplir su objetivo. Sin embargo, en algunas instancias los movimientos totales son considerablemente menores, lo cual puede deberse a restricciones impuestas por el costo total permitido o a configuraciones en las que no es necesario agotar el máximo de movimientos para minimizar el extremismo. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/movimientosmaximosytotales.png}
+    \caption{Comparación entre los movimientos máximos permitidos y los totales realizados por el modelo}
 \end{figure}
 
 \section{Conclusiones}
