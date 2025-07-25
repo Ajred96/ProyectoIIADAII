@@ -1,98 +1,112 @@
+
 # ProyectoIIADAII - MinExt Solver
-Desarrollo proyecto 2 De ADA II
 
-Una aplicación web construida con Flask para cargar, visualizar y resolver instancias del problema **"MinExt"**.  
-La interfaz permite al usuario:
-
-- Subir un archivo de instancia.
-- Ver los datos de entrada de forma gráfica y tabular.
-- Obtener una visualización de los resultados de la solución.
+Una aplicación web construida con Flask para cargar, visualizar y resolver instancias del problema **"MinExt"**.
 
 ---
 
-## 🚀 Requisitos Previos
+## 📁 Descripción de Archivos y Directorios
 
-- Python 3  
-- pip (generalmente se instala junto con Python)
-### MiniZinc
+- **README**:  
+  Este archivo. Contiene la descripción del proyecto y las instrucciones para ejecutar la aplicación.
 
-Es fundamental tener **MiniZinc** instalado, ya que el backend lo utiliza para resolver los modelos de optimización.
+- **Informe.pdf**:  
+  Documento final del proyecto que detalla el problema, el modelo de optimización, el análisis de resultados y las conclusiones. Incluye el enlace al video de sustentación.
 
-1.  **Descargar e Instalar:** Obtener el paquete de instalación (IDE bundle) desde el [sitio web oficial de MiniZinc](https://www.minizinc.org/software.html).
+- **Informe/**:  
+  Código fuente en LaTeX para generar el `Informe.pdf`.
 
-2.  **Configura el PATH:** Durante la instalación, o de forma manual después, es **crucial** que se añada la carpeta de instalación de MiniZinc a las variables de entorno (PATH) del sistema. Esto permite que la terminal reconozca el comando `minizinc`, que es necesario para que la aplicación funcione.
+- **Proyecto.mzn**:  
+  Implementación del modelo de optimización en MiniZinc.
+
+- **DatosProyecto/**:  
+  Conjunto de instancias de prueba utilizadas para validar el modelo.
+
+- **MisInstancias/**:  
+  5 instancias retadoras diseñadas por el equipo para probar la escalabilidad de otras soluciones.
+
+- **ProyectoGUIFuentes/**:  
+  Contiene todos los archivos fuente de la interfaz gráfica (GUI).
 
 ---
 
-## ⚙️ Instalación y Configuración
+## 🎥 Video de Sustentación
 
-Sigue estos pasos para configurar el proyecto localmente en un entorno virtual (`venv`).
+[Ver en Google Drive](https://drive.google.com/file/d/1n1nj8be4HFs8x6auUjzf9EMFuxjoCUNe/view?usp=sharing)
 
-### 1. Crea y Activa el Entorno Virtual (Recomendado)
+---
 
-#### En macOS y Linux:
+## ⚙️ Instalación y Ejecución
+
+> Todos los comandos deben ejecutarse desde la carpeta `ProyectoGUIFuentes`.
+
+### 🔧 Requisitos Previos
+
+1. Python 3
+2. pip (incluido usualmente con Python)
+3. MiniZinc  
+   Asegúrate de tenerlo instalado y añadido al **PATH** del sistema.  
+   [Descargar desde minizinc.org](https://www.minizinc.org/software.html)
+
+---
+
+### 🚀 Pasos para la Ejecución
+
+1. Navega al directorio de la GUI:
 
 ```bash
-# Crear el entorno virtual
-python3 -m venv venv
+cd ProyectoGUIFuentes
+```
 
-# Activar el entorno
+2. (Recomendado) Crea y activa un entorno virtual:
+
+**En macOS / Linux:**
+
+```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-#### En Windows (Command Prompt o PowerShell):
+**En Windows:**
 
 ```bash
-# Crear el entorno virtual
 python -m venv venv
-
-# Activar el entorno
-.\env\Scripts\activate
+.env\Scriptsctivate
 ```
 
-Una vez activado, deberías ver `(venv)` al principio de la línea de tu terminal.
-
-### 2. Instala las Dependencias
-
-Instala las librerías necesarias usando `pip`:
+3. Instala las dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-
-### 2. Ejecución
-### Opción 1 (recomendada):
+4. Ejecuta la aplicación Flask:
 
 ```bash
 flask run
 ```
 
-### Opción 2:
+O también:
 
 ```bash
 python app.py
 ```
 
+5. Abre tu navegador y ve a:
+
+```
+http://127.0.0.1:5000
+```
+
 ---
 
+## 🧭 Uso de la Aplicación
 
-
-La aplicación estará disponible en tu navegador en la siguiente dirección:
-
-➡️ [http://127.0.0.1:5000](http://127.0.0.1:5000)
-➡️ [http://localhost:5000](http://localhost:5000)
----
-
-## 📋 Uso de la Aplicación
-
-1. Abre [http://127.0.0.1:5000](http://127.0.0.1:5000) en tu navegador web.
-2. Haz clic en **"Seleccionar un archivo .txt..."** para cargar tu archivo de instancia.
-3. Después de cargar el archivo, los datos de entrada se mostrarán automáticamente en la pestaña **"Entrada"**.
-4. Presiona el botón azul **"Resolver"** para iniciar el cálculo.
-5. La aplicación procesará la solicitud y te redirigirá a la pestaña **"Resultados"** con:
-   - Un resumen gráfico.
-   - Una tabla con la solución.
-   - La salida en crudo del solver estará disponible en la pestaña **"Salida Raw"**.
+1. Abre `http://127.0.0.1:5000` en tu navegador.
+2. Usa el botón **"Seleccionar un archivo .txt..."** para cargar una instancia desde `DatosProyecto/` o `MisInstancias/`.
+3. La pestaña **"Entrada"** mostrará los datos de la instancia cargada.
+4. Haz clic en el botón **"Resolver"** para iniciar el cálculo.
+5. La solución se mostrará en las pestañas **"Resultados"** y **"Salida Raw"**.
+6. También se pueden crear instancias desde la interfaz haciendo clic en **"Crear Nueva Instancia"**.
 
 ---

@@ -401,7 +401,7 @@ La siguiente gráfica permite observar que, en general, cuanto mayor cantidad de
     \caption{Comparación entre el costo total y el extremismo final obtenidos en las pruebas}
 \end{figure}
 
-\subsection{Gráfica de Costo máximo y Costo total}
+\subsubsection*{Gráfica de Costo máximo y Costo total}
 
 
 A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
@@ -427,6 +427,17 @@ A partir del desarrollo e implementación del modelo para minimizar el extremism
 
     \item \textbf{Viabilidad y Rendimiento Computacional:} La elección de MiniZinc junto con el solver COIN-BC y el método Branch and Bound fue adecuada para abordar la complejidad del problema. El análisis del árbol de búsqueda revela cómo el solver poda ramas infactibles de manera eficiente, convergiendo a una solución óptima garantizada. A pesar de la naturaleza NP-difícil de los problemas de optimización combinatoria, los tiempos de ejecución para todas las instancias, incluso las más grandes con 200 personas y 25 opiniones, se mantuvieron bajos (generalmente por debajo de 0.3 segundos), lo que demuestra la escalabilidad y aplicabilidad del modelo para casos de uso prácticos.
 \end{itemize}
+
+\section{Sustentación}
+
+A continuación, se presenta el enlace al video de sustentación del proyecto. En este video se realiza una demostración de la aplicación web y se explican en detalle el problema, el modelo de optimización implementado y los resultados obtenidos.
+
+\vspace{1cm}
+
+\begin{center}
+    \href{https://drive.google.com/file/d/1n1nj8be4HFs8x6auUjzf9EMFuxjoCUNe/view?usp=sharing}{\nolinkurl{Video de Sustentacion del Proyecto}}
+\end{center}
+
 
 \newpage
 \nocite{*}
