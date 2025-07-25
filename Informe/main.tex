@@ -21,6 +21,7 @@
 
 % Gráficos y figuras
 \usepackage{graphicx}
+\usepackage{longtable}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
@@ -47,7 +48,7 @@
 % Centrado de tablas
 \usepackage{array}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}} % Centrado horizontal y vertical
- 
+
 
 %%%%%%% PAQUETES Y CONFIGURACIONES %%%%%%% FIN
 
@@ -97,7 +98,6 @@ El fenómeno del extremismo ha cobrado especial relevancia en las sociedades act
 El presente trabajo se desarrolla mediante técnicas avanzadas de programación entera mixta y optimización combinatoria, utilizando el método Branch and Bound y herramientas de modelamiento como MiniZinc. El proyecto también incluye el diseño de una interfaz gráfica que permite a un usuario final interactuar de manera intuitiva con el modelo desarrollado.
 
 %%%%%%% INTRODUCCIÓN %%%%%%% FIN
-
 \newpage
 
 
@@ -130,7 +130,7 @@ El modelo implementado para resolver el problema \texttt{MinExt} se fundamenta e
 
 \subsection{Restricciones}
 \begin{itemize}
-    \item \textbf{Costo Máximo (Lineal):} 
+    \item \textbf{Costo Máximo (Lineal):}
     Esta restricción limita el costo total de todos los movimientos a un presupuesto máximo \texttt{ct}. Se clasifica como \textbf{lineal} porque la variable \texttt{costo} es de tipo \texttt{float} (continua).
     $$
     \text{costo} \le \text{ct}
@@ -165,7 +165,7 @@ El modelo implementado para resolver el problema \texttt{MinExt} se fundamenta e
     $$
     \forall i, j \in [1, m] \text{ donde } \text{ext}_i = \text{ext}_j \implies x_{i,j} = 0
     $$
-    
+
     \item \textbf{No Negatividad (De Cota):}
     Son restricciones de cota que aseguran que las variables no tomen valores negativos. Son un tipo fundamental de restricción lineal y entera.
     \begin{itemize}
@@ -187,7 +187,7 @@ Donde $\text{nueva\_p}_i$ es una variable que representa la población final en 
 
 \subsubsection{Explicación y Justificación}
 
-\paragraph{Explicación:} 
+\paragraph{Explicación:}
 La función objetivo calcula una métrica de \textbf{extremismo agregado} para toda la población. Esto se logra a través de una suma ponderada: para cada opinión posible, se multiplica su extremismo (el parámetro $ext_i$) por el número de personas que finalmente pertenecen a esa opinión (la variable $nueva\_p_i$). De esta manera, las opiniones con valores altos de extremismo y una gran cantidad de adherentes contribuyen más al valor total de la función.
 
 \paragraph{Justificación:}
@@ -262,6 +262,189 @@ Continuando por el camino viable, el solver encuentra sus primeras soluciones co
 \paragraph{Paso 5 - Convergencia a la Solución Óptima:}
 Finalmente, tras haber explorado o podado todas las ramas del árbol, el solver llega al \textbf{rombo naranja}. Este nodo representa la \textbf{solución óptima final}. En este punto, todas las variables de decisión tienen un valor específico. Para este problema, la solución óptima consistió en mover 4 personas de la opinión 3 a la 4, con un costo total de 4.8 y una distribución final de la población de \texttt{[8, 6, 0, 6, 0]}. El solver puede garantizar que esta es la mejor solución posible porque todas las demás alternativas han sido sistemáticamente evaluadas y descartadas, ya sea por ser infactibles o por conducir a soluciones de peor calidad que la óptima encontrada.
 
-\section{}
+\section{Pruebas}
+
+\subsection{Rendimiento del equipo}
+Las pruebas fueron ejecutadas en un equipo con sistema operativo Windows 11 Pro, equipado con un procesador Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz, con 6 núcleos físicos y 12 hilos lógicos, y 64 GB de memoria RAM. Para la resolución de las instancias se utilizó MiniZinc versión 2.9.3 (build 1832600886) junto con el solver COIN-BC 2.10.12/1.17.10. Este entorno computacional permitió llevar a cabo simulaciones de alta demanda, haciendo posible procesar casos complejos con grandes cantidades de personas, opiniones y restricciones.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{resources/rendimientodelequipo.jpg}
+    \caption{Rendimiento del equipo en el que se realizaron las pruebas}
+\end{figure}
+
+
+\subsection{Resultados obtenidos con las intancias de la batería de pruebas}
+
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Prueba} & \textbf{Personas} & \textbf{Opiniones} & \textbf{Costo Máximo} & \textbf{Mov. Máx.} & \textbf{Tiempo} & \textbf{Ext. Inicial} & \textbf{Ext. Final} & \textbf{Costo Total} & \textbf{Mov. Totales} & \textbf{\% Reducción} \\
+    \hline
+    Prueba1.txt & 10 & 5 & 75.01 & 9 & 0.17 & 6.145 & 3.846 & 22.74 & 9 & \textbf{37.4\%} \\
+    Prueba2.txt & 10 & 5 & 24.14 & 4 & 0.19 & 7.409 & 4.582 & 8.35 & 4 & \textbf{38.2\%} \\
+    Prueba3.txt & 10 & 5 & 81.78 & 22 & 0.19 & 2.905 & 0.261 & 72.53 & 14 & \textbf{91.0\%} \\
+    Prueba4.txt & 10 & 5 & 96.95 & 25 & 0.16 & 3.844 & 1.06 & 19.65 & 11 & \textbf{72.4\%} \\
+    Prueba5.txt & 10 & 5 & 128.25 & 1 & 0.18 & 5.369 & 4.448 & 4.12 & 1 & \textbf{17.1\%} \\
+    Prueba6.txt & 15 & 5 & 60.84 & 10 & 0.18 & 12.123 & 9.583 & 29.05 & 10 & \textbf{21.0\%} \\
+    Prueba7.txt & 15 & 5 & 141.96 & 25 & 0.17 & 5.275 & 0.829 & 76.64 & 25 & \textbf{84.3\%} \\
+    Prueba8.txt & 20 & 5 & 112.21 & 27 & 0.2 & 8.367 & 3.541 & 38.99 & 27 & \textbf{57.7\%} \\
+    Prueba9.txt & 20 & 5 & 87.46 & 9 & 0.17 & 8.645 & 3.654 & 33.3 & 9 & \textbf{57.7\%} \\
+    Prueba10.txt & 20 & 5 & 17.35 & 32 & 0.18 & 13.303 & 10.353 & 16.79 & 18 & \textbf{22.2\%} \\
+    Prueba11.txt & 40 & 10 & 151.21 & 58 & 0.19 & 15.22 & 2.12 & 130.0 & 58 & \textbf{86.1\%} \\
+    Prueba12.txt & 40 & 10 & 210.9 & 16 & 0.19 & 21.1 & 13.339 & 51.34 & 16 & \textbf{36.8\%} \\
+    Prueba13.txt & 40 & 10 & 7.79 & 14 & 0.20 & 22.623 & 15.977 & 7.51 & 14 & \textbf{29.4\%} \\
+    Prueba14.txt & 40 & 15 & 180.06 & 35 & 0.22 & 13.79 & 2.686 & 85.27 & 35 & \textbf{80.5\%} \\
+    Prueba15.txt & 40 & 15 & 92.67 & 75 & 0.21 & 16.612 & 2.729 & 92.49 & 74 & \textbf{83.6\%} \\
+    Prueba16.txt & 60 & 15 & 218.28 & 86 & 0.21 & 40.015 & 10.099 & 158.62 & 86 & \textbf{74.8\%} \\
+    Prueba17.txt & 60 & 15 & 341.71 & 112 & 0.21 & 33.925 & 10.496 & 145.73 & 112 & \textbf{69.0\%} \\
+    Prueba18.txt & 60 & 15 & 307.48 & 111 & 0.22 & 32.041 & 6.618 & 93.54 & 111 & \textbf{79.3\%} \\
+    Prueba19.txt & 75 & 15 & 351.34 & 56 & 0.20 & 33.053 & 19.749 & 96.7 & 56 & \textbf{40.3\%} \\
+    Prueba20.txt & 75 & 15 & 427.21 & 106 & 0.21 & 51.375 & 21.65 & 174.63 & 106 & \textbf{57.9\%} \\
+    Prueba21.txt & 100 & 10 & 465.21 & 67 & 0.20 & 49.512 & 15.703 & 209.57 & 67 & \textbf{68.3\%} \\
+    Prueba22.txt & 100 & 10 & 88.92 & 117 & 0.22 & 51.216 & 13.868 & 84.5 & 116 & \textbf{72.9\%} \\
+    Prueba23.txt & 100 & 20 & 505.07 & 38 & 0.23 & 49.116 & 27.999 & 48.68 & 38 & \textbf{43.0\%} \\
+    Prueba24.txt & 100 & 20 & 111.23 & 184 & 0.22 & 35.201 & 3.787 & 110.94 & 184 & \textbf{89.2\%} \\
+    Prueba25.txt & 100 & 20 & 309.98 & 8 & 0.22 & 44.634 & 37.859 & 21.0 & 8 & \textbf{15.2\%} \\
+    Prueba26.txt & 150 & 20 & 872.85 & 283 & 0.23 & 79.792 & 14.28 & 288.75 & 283 & \textbf{82.1\%} \\
+    Prueba27.txt & 150 & 20 & 653.84 & 261 & 0.23 & 74.552 & 11.404 & 547.54 & 261 & \textbf{84.7\%} \\
+    Prueba28.txt & 200 & 25 & 750.26 & 1 & 0.24 & 94.074 & 93.27 & 3.02 & 1 & \textbf{0.9\%} \\
+    Prueba29.txt & 200 & 25 & 1018.16 & 275 & 0.27 & 109.717 & 27.626 & 396.51 & 275 & \textbf{74.8\%} \\
+    Prueba30.txt & 200 & 25 & 243.66 & 339 & 0.33 & 117.456 & 48.086 & 243.54 & 339 & \textbf{59.1\%} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Tabla de resultados obtenidos por el modelo implementado en MiniZinc a lo largo de la batería de pruebas.}
+\end{table}
+
+\subsection{Resultados obtenidos con las 5 instancias generadas}
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Prueba} & \textbf{Personas} & \textbf{Opiniones} & \textbf{Costo Máximo} & \textbf{Mov. Máx.} & \textbf{Tiempo} & \textbf{Ext. Inicial} & \textbf{Ext. Final} & \textbf{Costo Total} & \textbf{Mov. Totales} & \textbf{\% Reducción} \\
+    \hline
+    Instancia1.txt & 25 & 6 & 89.76 & 40 & 0.65 & 8.661 & 4.395 & 32.84 & 21 & \textbf{49.26\%} \\
+    Instancia2.txt & 30 & 7 & 105.52 & 55 & 0.59 & 11.893 & 7.056 & 58.49 & 54 & \textbf{40.67\%} \\
+    Instancia3.txt & 20 & 5 & 72.35 & 38 & 0.29 & 5.344 & 3.170 & 20.59 & 15 & \textbf{40.68\%} \\
+    Instancia4.txt & 50 & 8 & 150.60 & 65 & 0.28 & 17.306 & 5.466 & 55.63 & 64 & \textbf{68.42\%} \\
+    Instancia5.txt & 35 & 6 & 95.28 & 48 & 0.26 & 7.169 & 4.410 & 25.73 & 38 & \textbf{38.49\%} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Tabla de resultados obtenidos por el modelo implementado en MiniZinc a lo largo de las intancias creadas.}
+\end{table}
+
+\section{Descripción de las pruebas realizadas}
+Estas pruebas simulan el proceso de moderación y agrupación de opiniones, permitiendo evaluar cómo responde el modelo ante distintas configuraciones de entrada.
+
+Cada prueba se basa en una instancia diferente del problema, esta es definida por los parametros de entrada, los criterios para las instancias probadas incluyen variaciones en la distribución inicial de moderación y la intensidad del extremismo entre las personas.
+
+De las pruebas se puede deducir que:
+\begin{itemize}
+    \item Para una población pequeña y esfuerzo bajo se puede evidenciar que el modelo es capaz de cumplir con las restricciones proporcionadas, favoreciendo que la distribución de personas se concentre entre las pocas opciones compatibles.
+
+    \item Al incrementar el esfuerzo máximo permitido, se puede evidenciar una disminución notable del extremismo.Dado a que se proporciona una mayor flexibilidad para realizar redistribuciones, lo cual implica reducir el conflicto interno a costa de un mayor esfuerzo.
+
+    \item Cuando el costo de mover personas es significativo en relación con el esfuerzo total permitido, el modelo priorizará cambios de bajo esfuerzo o en algunos casos evitará realizar ciertos movimientos. Lo cuál puede llevar a que algunos grupos puedan llegar a permanecer sin cambios y que la polarización no disminuya considerablemente, dado que solo algunos movimientos son viables.
+
+    \item Cuando el esfuerzo total permitido es bajo, se puede presentar la situación en la cual el modelo no encuentra una solución factible, dado que en este caso el modelo no podría realizar los movimientos suficientes para cumplir con las restricciones.
+
+    \item El rendimiento del equipo es un factor a considerar dentro del rendimiento del modelo respecto a las pruebas, dado que al aumentar considerablemente el número de personas, se pueden llegar a presentar dificultades para obtener una solución factible, debido a que en escenarios complejos es necesario realizar diversas operaciones las cuales generan una carga computacional. En estos casos si no se cuenta con un equipo que posea el rendimiento adecuado se pueden llegar a presentar alteraciones en el tiempo de ejecución.
+
+
+\end{itemize}
+
+
+
+\section{Análisis de las pruebas}
+
+A partir de los resultados obtenidos en la batería de pruebas, es importante resaltar que el modelo implementado en MiniZinc logra cumplir con las restricciones establecidas y en la mayoría de los casos, logra obtener una solución óptima en terminos del extremismo final, sin embargo, en otros casos no alcanza a llegar a la solución óptima por una diferencia de decimas. Respecto a los tiempos de ejecución obtenidos por el modelo se puede evidenciar que estos no fueron prolongados.
+
+
+\subsubsection*{Gráfica de Extremismo inicial y Extremismo final}
+La siguiente gráfica corresponde a una comparación entre el extremismo inicial proporcionado y el extremismo final obtenido con el modelo. Se puede evidenciar que el extremismo final es considerablemente menor que el inicialmente proporcionado, lo cual refleja la eficiencia del modelo.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/extremismoiyf.png}
+    \caption{Comparación entre los niveles de extremismo inicial y final obtenidos en las pruebas}
+\end{figure}
+
+\subsubsection*{Grafica de Costo total y Extremismo final}
+La siguiente gráfica permite observar que, en general, a medida que aumenta el costo total disponible, el extremismo final tiende a disminuir. Esto indica que el modelo es capaz de reducir la polarización cuando se le otorgan más recursos para realizar movimientos. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/costototalvsextremismofinal.png}
+    \caption{Comparación entre el costo total y el extremismo final obtenidos en las pruebas}
+\end{figure}
+
+\subsection{Gráfica de Costo máximo y Costo total}
+
+A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene significativamente por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/costomaximoycostototal.png}
+    \caption{Comparación entre el costo máximo asignado y el costo total obtenido por el modelo}
+\end{figure}
+
+
+\subsubsection*{Gráfica de Movimientos máximos permitidos y Movimientos totales}
+La siguiente gráfica evidencia  que en la mayoría de los casos, se observa que los movimientos totales tienden a ser iguales o ligeramente inferiores al máximo permitido, lo que indica que el modelo aprovecha casi todo el margen de acción disponible para cumplir su objetivo. Sin embargo, en algunas instancias los movimientos totales son considerablemente menores, lo cual puede deberse a restricciones impuestas por el costo total permitido o a configuraciones en las que no es necesario agotar el máximo de movimientos para minimizar el extremismo. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/movimientosmaximosytotales.png}
+    \caption{Comparación entre los movimientos máximos permitidos y los totales realizados por el modelo}
+\end{figure}
+
+\section{Conclusiones}
+
+A partir del desarrollo e implementación del modelo para minimizar el extremismo presente en una población (MinExt), se pueden destacar diversas conclusiones importantes:
+
+\begin{itemize}
+    \item El modelo desarrollado permite reducir eficazmente el nivel total de extremismo en una población, siempre y cuando se disponga de suficientes recursos económicos y logísticos. Los resultados obtenidos en las pruebas muestran una reducción significativa del extremismo, especialmente en escenarios con mayor flexibilidad en términos de costo y número máximo de movimientos permitidos.
+
+    \item La estrategia implementada mediante programación entera mixta y técnicas de optimización combinatoria (Branch and Bound) resultó adecuada para resolver el problema planteado, obteniendo soluciones óptimas o cercanas a la óptima en tiempos aceptables de ejecución.
+
+    \item Se observó que la complejidad computacional aumenta considerablemente con el incremento del número de personas y opiniones, así como con restricciones más estrictas sobre costos y movimientos máximos. Esto implica que, en escenarios reales, es crucial balancear adecuadamente estas restricciones para mantener un equilibrio entre precisión y viabilidad del tiempo de procesamiento.
+
+    \item La interfaz gráfica desarrollada facilita significativamente la interacción del usuario con el modelo, permitiendo una comprensión inmediata de los resultados a través de gráficos comparativos y resúmenes numéricos claros. Esto mejora la accesibilidad y utilidad del modelo para usuarios no especializados en técnicas avanzadas de optimización.
+
+    \item Propuestas para investigaciones futuras: explorar técnicas alternativas que optimicen aún más el tiempo de solución para instancias mayores o incorporar métodos heurísticos para manejar situaciones de alta complejidad computacional.
+
+    \item Finalmente, se destaca la importancia del hardware utilizado, ya que el rendimiento del equipo puede afectar notablemente el tiempo necesario para alcanzar soluciones factibles en problemas de mayor tamaño. Esto subraya la necesidad de disponer de infraestructura tecnológica adecuada en contextos donde se implementen modelos de optimización complejos.
+
+
+
+\end{itemize}
+
+\section{Referencias}
+
+\begin{itemize}
+    \item Ahuja, R. K., Magnanti, T. L., \& Orlin, J. B. (1993). \textit{Network Flows: Theory, Algorithms, and Applications}. Prentice Hall.
+
+    \item Nemhauser, G. L., \& Wolsey, L. A. (1999). \textit{Integer and Combinatorial Optimization}. Wiley-Interscience.
+
+    \item Rossi, F., Van Beek, P., \& Walsh, T. (2006). \textit{Handbook of Constraint Programming}. Elsevier.
+
+    \item Flask. (s.f.). \textit{Flask Documentation}. Recuperado de: \url{https://flask.palletsprojects.com}
+
+    \item MiniZinc. (s.f.). \textit{MiniZinc Handbook 2.5.0}. Recuperado de: \url{https://www.minizinc.org/doc-2.5.0/en/index.html}
+
+    \item COIN-OR Branch and Cut. (s.f.). \textit{CBC User Guide}. Recuperado de: \url{https://github.com/coin-or/Cbc}
+
+    \item Chart.js. (s.f.). \textit{Chart.js Documentation}. Recuperado de: \url{https://www.chartjs.org/docs/latest/}
+
+    \item TailwindCSS. (s.f.). \textit{TailwindCSS Documentation}. Recuperado de: \url{https://tailwindcss.com/docs}
+\end{itemize}
+
+
+
 
 \end{document}
