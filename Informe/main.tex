@@ -337,9 +337,7 @@ Prueba30.txt         &200  &25  &243,66 &339 & 0,33 &117,456& \cellcolor[HTML]{F
 \label{tab:mis_resultados}
 \end{table}
 
-
-
-\subsection{Resultados obtenidos con las 5 instancias generadas}
+\subsection{Resultados obtenidos con las 5 instancias retadoras}
 \begin{table}[H]
     \centering
     \small
@@ -348,16 +346,17 @@ Prueba30.txt         &200  &25  &243,66 &339 & 0,33 &117,456& \cellcolor[HTML]{F
     \hline
     \textbf{Prueba} & \textbf{Personas} & \textbf{Opiniones} & \textbf{Costo Máximo} & \textbf{Mov. Máx.} & \textbf{Tiempo} & \textbf{Ext. Inicial} & \textbf{Ext. Final} & \textbf{Costo Total} & \textbf{Mov. Totales} & \textbf{\% Reducción} \\
     \hline
-    Instancia1.txt & 25 & 6 & 89.76 & 40 & 0.65 & 8.661 & 4.395 & 32.84 & 21 & \textbf{49.26\%} \\
-    Instancia2.txt & 30 & 7 & 105.52 & 55 & 0.59 & 11.893 & 7.056 & 58.49 & 54 & \textbf{40.67\%} \\
-    Instancia3.txt & 20 & 5 & 72.35 & 38 & 0.29 & 5.344 & 3.170 & 20.59 & 15 & \textbf{40.68\%} \\
-    Instancia4.txt & 50 & 8 & 150.60 & 65 & 0.28 & 17.306 & 5.466 & 55.63 & 64 & \textbf{68.42\%} \\
-    Instancia5.txt & 35 & 6 & 95.28 & 48 & 0.26 & 7.169 & 4.410 & 25.73 & 38 & \textbf{38.49\%} \\
+    PruebaRetadora1.txt & 500 & 35 & 5000 & 800 & 0.37 & 239.258 & 34.368 & 911.71 & 800 & \textbf{85.64\%} \\
+    PruebaRetadora2.txt & 700 & 45 & 20000 & 2000 & 0.53 & 376.172 & 36.532 & 1673.18 & 2000 & \textbf{90.29\%} \\
+    PruebaRetadora3.txt & 600 & 40 & 500 & 2000 & 0.59 & 255.533 & 46.267 & 499.91 & 2000 & \textbf{81.89\%} \\
+    PruebaRetadora4.txt & 1000 & 60 & 30000 & 1000 & 0.80 & 493.238 & 156.861 & 1735.91 & 1000 & \textbf{68.20\%} \\
+    PruebaRetadora5.txt & 1000 & 50 & 8000 & 200 & 0.57 & 472.691 & 340.034 & 583.69 & 200 & \textbf{28.06\%} \\
     \hline
     \end{tabular}
     }
-    \caption{Tabla de resultados obtenidos por el modelo implementado en MiniZinc a lo largo de las intancias creadas.}
+    \caption{Resultados obtenidos por el modelo con instancias retadoras de gran tamaño y restricciones complejas.}
 \end{table}
+
 
 \section{Descripción de las pruebas realizadas}
 Estas pruebas simulan el proceso de moderación y agrupación de opiniones, permitiendo evaluar cómo responde el modelo ante distintas configuraciones de entrada.
