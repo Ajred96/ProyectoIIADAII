@@ -359,6 +359,26 @@ Prueba30.txt         &200  &25  &243,66 &339 & 0,33 &117,456& \cellcolor[HTML]{F
     \caption{Tabla de resultados obtenidos por el modelo implementado en MiniZinc a lo largo de las intancias creadas.}
 \end{table}
 
+\subsection{Resultados obtenidos con las 5 instancias generadas}
+\begin{table}[H]
+    \centering
+    \small
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Prueba} & \textbf{Personas} & \textbf{Opiniones} & \textbf{Costo Máximo} & \textbf{Mov. Máx.} & \textbf{Tiempo} & \textbf{Ext. Inicial} & \textbf{Ext. Final} & \textbf{Costo Total} & \textbf{Mov. Totales} & \textbf{\% Reducción} \\
+    \hline
+    Instancia1.txt & 25 & 6 & 89.76 & 40 & 0.65 & 8.661 & 4.395 & 32.84 & 21 & \textbf{49.26\%} \\
+    Instancia2.txt & 30 & 7 & 105.52 & 55 & 0.59 & 11.893 & 7.056 & 58.49 & 54 & \textbf{40.67\%} \\
+    Instancia3.txt & 20 & 5 & 72.35 & 38 & 0.29 & 5.344 & 3.170 & 20.59 & 15 & \textbf{40.68\%} \\
+    Instancia4.txt & 50 & 8 & 150.60 & 65 & 0.28 & 17.306 & 5.466 & 55.63 & 64 & \textbf{68.42\%} \\
+    Instancia5.txt & 35 & 6 & 95.28 & 48 & 0.26 & 7.169 & 4.410 & 25.73 & 38 & \textbf{38.49\%} \\
+    \hline
+    \end{tabular}
+    }
+    \caption{Tabla de resultados obtenidos por el modelo implementado en MiniZinc a lo largo de las intancias creadas.}
+\end{table}
+
 \section{Descripción de las pruebas realizadas}
 Estas pruebas simulan el proceso de moderación y agrupación de opiniones, permitiendo evaluar cómo responde el modelo ante distintas configuraciones de entrada.
 
@@ -381,7 +401,9 @@ De las pruebas se puede deducir que:
 
 \section{Análisis de las pruebas}
 
-A partir de los resultados obtenidos en la batería de pruebas, es importante resaltar que el modelo implementado en MiniZinc logra cumplir con las restricciones establecidas y en todos los casos logra obtener una solución óptima en terminos del extremismo final.
+
+A partir de los resultados obtenidos en la batería de pruebas, es importante resaltar que el modelo implementado en MiniZinc logra cumplir con las restricciones establecidas y en todos los casos logra obtener una solución óptima en terminos del extremismo final. 
+
 
 \subsubsection*{Gráfica de Extremismo inicial y Extremismo final}
 La siguiente gráfica muestra una comparación entre el nivel de extremismo inicial proporcionado y el extremismo final obtenido mediante el modelo. Se puede observar que el extremismo final corresponde al resultado óptimo esperado, ya que se busca que este sea siempre menor que el valor inicial.
@@ -402,7 +424,9 @@ La siguiente gráfica permite observar que, en general, cuanto mayor cantidad de
 
 \subsection{Gráfica de Costo máximo y Costo total}
 
+
 A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
+
 
 \begin{figure}[H]
     \centering
@@ -418,6 +442,7 @@ A partir del desarrollo e implementación del modelo para minimizar el extremism
 
 \begin{itemize}
     \item \textbf{Eficacia del Modelo en la Reducción del Extremismo:} El modelo de optimización, implementado mediante programación entera mixta, demostró ser altamente eficaz para reducir el nivel de extremismo en una población. Los resultados obtenidos en la batería de 35 pruebas confirman que, en todos los casos, se encontró una solución que disminuyó el extremismo inicial, logrando en algunos escenarios reducciones de hasta un 91.0\%. Esto valida el enfoque como una herramienta estratégica para la moderación de opiniones.
+
 
     \item \textbf{Impacto de los Recursos en la Solución:} Se evidenció una correlación directa entre los recursos disponibles (costo y movimientos máximos) y la capacidad del modelo para reducir el extremismo. Las pruebas demuestran que una mayor flexibilidad en estos parámetros permite al solver explorar soluciones más efectivas que implican mayores redistribuciones de la población, llevando a una disminución más significativa del conflicto interno. Por el contrario, restricciones muy ajustadas limitan las opciones del modelo, resultando en reducciones de extremismo más modestas, como se vio en la prueba 28 con una reducción de solo el 0.9\%.
 
