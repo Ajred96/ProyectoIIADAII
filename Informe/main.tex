@@ -36,8 +36,10 @@
 
 % Referencias y notas
 \usepackage{nameref}
-\usepackage{natbib}
+
 \usepackage{endnotes}
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{bibliografia.bib}
 
 % Hipervínculos (último siempre que sea posible)
 \usepackage{hyperref}
@@ -348,13 +350,11 @@ De las pruebas se puede deducir que:
 \begin{itemize}
     \item Para una población pequeña y esfuerzo bajo se puede evidenciar que el modelo es capaz de cumplir con las restricciones proporcionadas, favoreciendo que la distribución de personas se concentre entre las pocas opciones compatibles.
 
-    \item Al incrementar el esfuerzo máximo permitido, se puede evidenciar una disminución notable del extremismo.Dado a que se proporciona una mayor flexibilidad para realizar redistribuciones, lo cual implica reducir el conflicto interno a costa de un mayor esfuerzo.
+    \item Al incrementar el esfuerzo máximo permitido, se puede evidenciar una disminución notable del extremismo. Dado a que se proporciona una mayor flexibilidad para realizar redistribuciones, lo cual implica reducir el conflicto interno a costa de un mayor esfuerzo.
 
-    \item Cuando el costo de mover personas es significativo en relación con el esfuerzo total permitido, el modelo priorizará cambios de bajo esfuerzo o en algunos casos evitará realizar ciertos movimientos. Lo cuál puede llevar a que algunos grupos puedan llegar a permanecer sin cambios y que la polarización no disminuya considerablemente, dado que solo algunos movimientos son viables.
+    \item Cuando el costo de mover personas es significativo en relación con el esfuerzo total permitido, el modelo priorizará cambios de bajo esfuerzo o en algunos casos evitará realizar ciertos movimientos. Lo cual puede llevar a que algunos grupos lleguen a permanecer sin cambios y el extremismo no disminuya considerablemente, dado que solo algunos movimientos son viables.
 
     \item Cuando el esfuerzo total permitido es bajo, se puede presentar la situación en la cual el modelo no encuentra una solución factible, dado que en este caso el modelo no podría realizar los movimientos suficientes para cumplir con las restricciones.
-
-    \item El rendimiento del equipo es un factor a considerar dentro del rendimiento del modelo respecto a las pruebas, dado que al aumentar considerablemente el número de personas, se pueden llegar a presentar dificultades para obtener una solución factible, debido a que en escenarios complejos es necesario realizar diversas operaciones las cuales generan una carga computacional. En estos casos si no se cuenta con un equipo que posea el rendimiento adecuado se pueden llegar a presentar alteraciones en el tiempo de ejecución.
 
 
 \end{itemize}
@@ -363,11 +363,10 @@ De las pruebas se puede deducir que:
 
 \section{Análisis de las pruebas}
 
-A partir de los resultados obtenidos en la batería de pruebas, es importante resaltar que el modelo implementado en MiniZinc logra cumplir con las restricciones establecidas y en la mayoría de los casos, logra obtener una solución óptima en terminos del extremismo final, sin embargo, en otros casos no alcanza a llegar a la solución óptima por una diferencia de decimas. Respecto a los tiempos de ejecución obtenidos por el modelo se puede evidenciar que estos no fueron prolongados.
-
+A partir de los resultados obtenidos en la batería de pruebas, es importante resaltar que el modelo implementado en MiniZinc logra cumplir con las restricciones establecidas y en todos los casos logra obtener una solución óptima en terminos del extremismo final. 
 
 \subsubsection*{Gráfica de Extremismo inicial y Extremismo final}
-La siguiente gráfica corresponde a una comparación entre el extremismo inicial proporcionado y el extremismo final obtenido con el modelo. Se puede evidenciar que el extremismo final es considerablemente menor que el inicialmente proporcionado, lo cual refleja la eficiencia del modelo.
+La siguiente gráfica muestra una comparación entre el nivel de extremismo inicial proporcionado y el extremismo final obtenido mediante el modelo. Se puede observar que el extremismo final corresponde al resultado óptimo esperado, ya que se busca que este sea siempre menor que el valor inicial.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{resources/extremismoiyf.png}
@@ -375,7 +374,7 @@ La siguiente gráfica corresponde a una comparación entre el extremismo inicial
 \end{figure}
 
 \subsubsection*{Grafica de Costo total y Extremismo final}
-La siguiente gráfica permite observar que, en general, a medida que aumenta el costo total disponible, el extremismo final tiende a disminuir. Esto indica que el modelo es capaz de reducir la polarización cuando se le otorgan más recursos para realizar movimientos. 
+La siguiente gráfica permite observar que, en general, cuanto mayor cantidad de personas y movimientos totales se hayan realizado en el modelo, disminuye el extremismo final y aumenta el costo total de la solución.
 
 \begin{figure}[H]
     \centering
@@ -385,7 +384,7 @@ La siguiente gráfica permite observar que, en general, a medida que aumenta el 
 
 \subsection{Gráfica de Costo máximo y Costo total}
 
-A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene significativamente por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
+A través de la siguiente gráfica se puede evidenciar que en la mayoría de casos el costo total obtenido por el modelo se mantiene por debajo del costo inicial, lo que sugiere que el modelo no requiere agotar completamente el costo disponible para alcanzar soluciones óptimas.
 
 \begin{figure}[H]
     \centering
@@ -394,57 +393,21 @@ A través de la siguiente gráfica se puede evidenciar que en la mayoría de cas
 \end{figure}
 
 
-\subsubsection*{Gráfica de Movimientos máximos permitidos y Movimientos totales}
-La siguiente gráfica evidencia  que en la mayoría de los casos, se observa que los movimientos totales tienden a ser iguales o ligeramente inferiores al máximo permitido, lo que indica que el modelo aprovecha casi todo el margen de acción disponible para cumplir su objetivo. Sin embargo, en algunas instancias los movimientos totales son considerablemente menores, lo cual puede deberse a restricciones impuestas por el costo total permitido o a configuraciones en las que no es necesario agotar el máximo de movimientos para minimizar el extremismo. 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{resources/movimientosmaximosytotales.png}
-    \caption{Comparación entre los movimientos máximos permitidos y los totales realizados por el modelo}
-\end{figure}
 
 \section{Conclusiones}
 
 A partir del desarrollo e implementación del modelo para minimizar el extremismo presente en una población (MinExt), se pueden destacar diversas conclusiones importantes:
 
 \begin{itemize}
-    \item El modelo desarrollado permite reducir eficazmente el nivel total de extremismo en una población, siempre y cuando se disponga de suficientes recursos económicos y logísticos. Los resultados obtenidos en las pruebas muestran una reducción significativa del extremismo, especialmente en escenarios con mayor flexibilidad en términos de costo y número máximo de movimientos permitidos.
+    \item \textbf{Eficacia del Modelo en la Reducción del Extremismo:} El modelo de optimización, implementado mediante programación entera mixta, demostró ser altamente eficaz para reducir el nivel de extremismo en una población. Los resultados obtenidos en la batería de 35 pruebas confirman que, en todos los casos, se encontró una solución que disminuyó el extremismo inicial, logrando en algunos escenarios reducciones de hasta un 91.0\%. Esto valida el enfoque como una herramienta estratégica para la moderación de opiniones.
 
-    \item La estrategia implementada mediante programación entera mixta y técnicas de optimización combinatoria (Branch and Bound) resultó adecuada para resolver el problema planteado, obteniendo soluciones óptimas o cercanas a la óptima en tiempos aceptables de ejecución.
+    \item \textbf{Impacto de los Recursos en la Solución:} Se evidenció una correlación directa entre los recursos disponibles (costo y movimientos máximos) y la capacidad del modelo para reducir el extremismo. Las pruebas demuestran que una mayor flexibilidad en estos parámetros permite al solver explorar soluciones más efectivas que implican mayores redistribuciones de la población, llevando a una disminución más significativa del conflicto interno. Por el contrario, restricciones muy ajustadas limitan las opciones del modelo, resultando en reducciones de extremismo más modestas, como se vio en la prueba 28 con una reducción de solo el 0.9\%.
 
-    \item Se observó que la complejidad computacional aumenta considerablemente con el incremento del número de personas y opiniones, así como con restricciones más estrictas sobre costos y movimientos máximos. Esto implica que, en escenarios reales, es crucial balancear adecuadamente estas restricciones para mantener un equilibrio entre precisión y viabilidad del tiempo de procesamiento.
-
-    \item La interfaz gráfica desarrollada facilita significativamente la interacción del usuario con el modelo, permitiendo una comprensión inmediata de los resultados a través de gráficos comparativos y resúmenes numéricos claros. Esto mejora la accesibilidad y utilidad del modelo para usuarios no especializados en técnicas avanzadas de optimización.
-
-    \item Propuestas para investigaciones futuras: explorar técnicas alternativas que optimicen aún más el tiempo de solución para instancias mayores o incorporar métodos heurísticos para manejar situaciones de alta complejidad computacional.
-
-    \item Finalmente, se destaca la importancia del hardware utilizado, ya que el rendimiento del equipo puede afectar notablemente el tiempo necesario para alcanzar soluciones factibles en problemas de mayor tamaño. Esto subraya la necesidad de disponer de infraestructura tecnológica adecuada en contextos donde se implementen modelos de optimización complejos.
-
-
-
+    \item \textbf{Viabilidad y Rendimiento Computacional:} La elección de MiniZinc junto con el solver COIN-BC y el método Branch and Bound fue adecuada para abordar la complejidad del problema. El análisis del árbol de búsqueda revela cómo el solver poda ramas infactibles de manera eficiente, convergiendo a una solución óptima garantizada. A pesar de la naturaleza NP-difícil de los problemas de optimización combinatoria, los tiempos de ejecución para todas las instancias, incluso las más grandes con 200 personas y 25 opiniones, se mantuvieron bajos (generalmente por debajo de 0.3 segundos), lo que demuestra la escalabilidad y aplicabilidad del modelo para casos de uso prácticos.
 \end{itemize}
 
-\section{Referencias}
-
-\begin{itemize}
-    \item Ahuja, R. K., Magnanti, T. L., \& Orlin, J. B. (1993). \textit{Network Flows: Theory, Algorithms, and Applications}. Prentice Hall.
-
-    \item Nemhauser, G. L., \& Wolsey, L. A. (1999). \textit{Integer and Combinatorial Optimization}. Wiley-Interscience.
-
-    \item Rossi, F., Van Beek, P., \& Walsh, T. (2006). \textit{Handbook of Constraint Programming}. Elsevier.
-
-    \item Flask. (s.f.). \textit{Flask Documentation}. Recuperado de: \url{https://flask.palletsprojects.com}
-
-    \item MiniZinc. (s.f.). \textit{MiniZinc Handbook 2.5.0}. Recuperado de: \url{https://www.minizinc.org/doc-2.5.0/en/index.html}
-
-    \item COIN-OR Branch and Cut. (s.f.). \textit{CBC User Guide}. Recuperado de: \url{https://github.com/coin-or/Cbc}
-
-    \item Chart.js. (s.f.). \textit{Chart.js Documentation}. Recuperado de: \url{https://www.chartjs.org/docs/latest/}
-
-    \item TailwindCSS. (s.f.). \textit{TailwindCSS Documentation}. Recuperado de: \url{https://tailwindcss.com/docs}
-\end{itemize}
-
-
-
+\newpage
+\nocite{*}
+\printbibliography
 
 \end{document}
