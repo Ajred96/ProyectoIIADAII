@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 # Configuración de la aplicación
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MINIZINC_MODEL_PATH'] = os.path.join('minizinc', 'minext.mzn')
+app.config['MINIZINC_MODEL_PATH'] = os.path.join('..', 'Proyecto.mzn') 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Límite de 16MB
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
