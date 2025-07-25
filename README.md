@@ -14,6 +14,13 @@ La interfaz permite al usuario:
 
 - Python 3  
 - pip (generalmente se instala junto con Python)
+### MiniZinc
+
+Es fundamental tener **MiniZinc** instalado, ya que el backend lo utiliza para resolver los modelos de optimización.
+
+1.  **Descargar e Instalar:** Obtener el paquete de instalación (IDE bundle) desde el [sitio web oficial de MiniZinc](https://www.minizinc.org/software.html).
+
+2.  **Configura el PATH:** Durante la instalación, o de forma manual después, es **crucial** que se añada la carpeta de instalación de MiniZinc a las variables de entorno (PATH) del sistema. Esto permite que la terminal reconozca el comando `minizinc`, que es necesario para que la aplicación funcione.
 
 ---
 
